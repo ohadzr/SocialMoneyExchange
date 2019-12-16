@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1011420865795",
+    "firebase_url": "https://social-money-exchange-app.firebaseio.com",
+    "project_id": "social-money-exchange-app",
+    "storage_bucket": "social-money-exchange-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1011420865795:android:4f2a85e98aaf6ff0a8b536",
+        "android_client_info": {
+          "package_name": "il.ac.technion.socialmoneyexchange"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1011420865795-ap36v0shjn0hgicitbnjkbrh0cq0p439.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "il.ac.technion.socialmoneyexchange",
+            "certificate_hash": "0000e793937e0186dc7114791c81525418fe2001"
+          }
+        },
+        {
+          "client_id": "1011420865795-ov847rlmmo6j49lasqpf6sjtl7i4ip3g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCaustVry7njfx0Hwkj7Up-Pht176R1fG0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1011420865795-ov847rlmmo6j49lasqpf6sjtl7i4ip3g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

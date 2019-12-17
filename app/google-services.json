@@ -1,42 +1,42 @@
 {
   "project_info": {
-    "project_number": "1011420865795",
-    "firebase_url": "https://social-money-exchange-app.firebaseio.com",
-    "project_id": "social-money-exchange-app",
-    "storage_bucket": "social-money-exchange-app.appspot.com"
+    "project_number": "1062811174527",
+    "firebase_url": "https://test-e5d13.firebaseio.com",
+    "project_id": "test-e5d13",
+    "storage_bucket": "test-e5d13.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1011420865795:android:4f2a85e98aaf6ff0a8b536",
+        "mobilesdk_app_id": "1:1062811174527:android:c0f7242c918098f50b614a",
         "android_client_info": {
           "package_name": "il.ac.technion.socialmoneyexchange"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1011420865795-ap36v0shjn0hgicitbnjkbrh0cq0p439.apps.googleusercontent.com",
+          "client_id": "1062811174527-jno4phlrtbqia1p9ij2bl6sorguion6a.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "il.ac.technion.socialmoneyexchange",
-            "certificate_hash": "0000e793937e0186dc7114791c81525418fe2001"
+            "certificate_hash": "c8e3f0dcc31603a4b4f0f425eb2c4b2bc17f75dd"
           }
         },
         {
-          "client_id": "1011420865795-ov847rlmmo6j49lasqpf6sjtl7i4ip3g.apps.googleusercontent.com",
+          "client_id": "1062811174527-llr2t4mimq2vgu5u2gd7sn45rbe3tnpr.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCaustVry7njfx0Hwkj7Up-Pht176R1fG0"
+          "current_key": "AIzaSyAUPQdLEcuBmkR04jgAIzS8G93VtZbeG-k"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1011420865795-ov847rlmmo6j49lasqpf6sjtl7i4ip3g.apps.googleusercontent.com",
+              "client_id": "1062811174527-llr2t4mimq2vgu5u2gd7sn45rbe3tnpr.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

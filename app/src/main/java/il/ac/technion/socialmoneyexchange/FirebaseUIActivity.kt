@@ -3,6 +3,8 @@ package il.ac.technion.socialmoneyexchange
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
@@ -13,6 +15,8 @@ class FirebaseUIActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_firebase_ui)
+        val signButton: Button = findViewById(R.id.roll_button)
+        signButton.setOnClickListener { createSignInIntent() }
     }
 
     private fun createSignInIntent() {
@@ -32,7 +36,10 @@ class FirebaseUIActivity : AppCompatActivity() {
                 .setAvailableProviders(providers)
                 .build(),
             RC_SIGN_IN)
+//        val intent = Intent(this, FirstPage::class.java)
+//        startActivity(intent)
         // [END auth_fui_create_intent]
+        onActivityResult(RC_SIGN_IN, Activity.RESULT_OK,null )
     }
 
     // [START auth_fui_result]

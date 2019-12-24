@@ -16,11 +16,8 @@
   -->
 
 <resources>
-    <color name="colorPrimary">#039BE5</color>
-    <color name="colorPrimaryDark">#0288D1</color>
-    <color name="colorAccent">#FFA000</color>
-
-    <color name="grey_100">#F5F5F5</color>
-    <color name="grey_300">#E0E0E0</color>
-    <color name="grey_500">#9E9E9E</color>
+    <array name="fact_type">
+        <item>@string/fact_type_android</item>
+        <item>@string/fact_type_california</item>
+    </array>
 </resources>

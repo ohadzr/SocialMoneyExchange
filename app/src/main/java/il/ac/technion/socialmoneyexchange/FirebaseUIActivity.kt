@@ -15,7 +15,7 @@ class FirebaseUIActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_firebase_ui)
-        val signButton: Button = findViewById(R.id.roll_button)
+        val signButton: Button = findViewById(R.id.signInButton)
         signButton.setOnClickListener { createSignInIntent() }
     }
 
@@ -39,7 +39,7 @@ class FirebaseUIActivity : AppCompatActivity() {
 //        val intent = Intent(this, FirstPage::class.java)
 //        startActivity(intent)
         // [END auth_fui_create_intent]
-        onActivityResult(RC_SIGN_IN, Activity.RESULT_OK,null )
+//        onActivityResult(RC_SIGN_IN, Activity.RESULT_OK,null )
     }
 
     // [START auth_fui_result]

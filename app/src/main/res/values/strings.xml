@@ -133,5 +133,7 @@
     <string name="new_user_button_submit">Submit</string>
     <string name="debug_button">Debug</string>
     <string name="request_page">Request Page</string>
+    <string name="public_user_image">Public user image</string>
+    <string name="user_reviews_text">User reviews:</string>
 
 </resources>

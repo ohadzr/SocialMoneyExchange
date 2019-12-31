@@ -131,5 +131,7 @@
     <string name="first_name">First Name</string>
     <string name="last_name">Last Name</string>
     <string name="new_user_button_submit">Submit</string>
+    <string name="debug_button">Debug</string>
+    <string name="request_page">Request Page</string>
 
 </resources>

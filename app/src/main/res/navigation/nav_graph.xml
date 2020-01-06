@@ -19,7 +19,7 @@
             xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/nav_graph"
-            app:startDestination="@id/mainFragment">
+            app:startDestination="@id/requestFragment">
     <fragment
         android:id="@+id/mainFragment"
         android:name="il.ac.technion.socialmoneyexchange.MainFragment"
@@ -38,4 +38,9 @@
             android:name="il.ac.technion.socialmoneyexchange.LoginFragment"
             android:label="fragment_login"
             tools:layout="@layout/fragment_login"/>
+    <fragment
+        android:id="@+id/requestFragment"
+        android:name="il.ac.technion.socialmoneyexchange.RequestFragment"
+        android:label="fragment_request"
+        tools:layout="@layout/fragment_request" />
 </navigation>

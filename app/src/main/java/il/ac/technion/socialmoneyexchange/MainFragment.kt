@@ -143,6 +143,10 @@ class MainFragment : Fragment() {
             AuthUI.getInstance()
                 .createSignInIntentBuilder()
                 .setAvailableProviders(providers)
+                .setLogo(R.drawable.technion_logo_en_blue)
+                .setTosAndPrivacyPolicyUrls(
+                    "https://img.memecdn.com/terms-of-service_o_1982727.webp",
+                    "https://images7.memedroid.com/images/UPLOADED289/5b1bcf917d930.jpeg")
                 .build(),
             SIGN_IN_REQUEST_CODE
         )

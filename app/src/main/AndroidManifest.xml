@@ -16,6 +16,10 @@ package="il.ac.technion.socialmoneyexchange">
         </intent-filter>
     </activity>
     <activity android:name="FirebaseUIActivity"></activity>
+
+    <meta-data
+        android:name="preloaded_fonts"
+        android:resource="@array/preloaded_fonts" />
 </application>
 
 </manifest>

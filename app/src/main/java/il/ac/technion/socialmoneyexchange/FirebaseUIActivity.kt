@@ -3,6 +3,7 @@ package il.ac.technion.socialmoneyexchange
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -40,6 +41,7 @@ class FirebaseUIActivity : AppCompatActivity() {
 //        startActivity(intent)
         // [END auth_fui_create_intent]
 //        onActivityResult(RC_SIGN_IN, Activity.RESULT_OK,null )
+
     }
 
     // [START auth_fui_result]

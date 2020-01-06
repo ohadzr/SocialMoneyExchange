@@ -4,28 +4,20 @@
     android:id="@+id/RequestFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     tools:context=".RequestFragment">
 
-    <LinearLayout
+
+    <RelativeLayout
+        android:id="@+id/request_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:clipChildren="false"
         android:clipToPadding="false"
-        android:orientation="vertical"
         android:padding="24dp"
         android:paddingTop="16dp">
 
-        <com.toptoche.searchablespinnerlibrary.SearchableSpinner
 
-            android:id="@+id/searchable_coin_mine"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/hello_blank_fragment" />
-        <com.toptoche.searchablespinnerlibrary.SearchableSpinner
-            android:id="@+id/searchable_coin_other"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/hello_blank_fragment" />
-    </LinearLayout>
+    </RelativeLayout>
 </ScrollView>

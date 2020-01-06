@@ -137,5 +137,6 @@
     <string name="full_name">Full name</string>
     <string name="logo_image">Logo Image</string>
     <string name="about_text">This app was written by\nTamir Paz &amp; Ohad Zohar\n\nFinal Project at NSSL Lab\nThe Andrew &amp; Erna Viterbi\nFaculty of Electrical Engineering</string>
+    <string name="Select_currency">Select a currency</string>
 
 </resources>

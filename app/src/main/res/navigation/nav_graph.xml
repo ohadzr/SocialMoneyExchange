@@ -23,7 +23,8 @@
     <fragment
         android:id="@+id/mainFragment"
         android:name="il.ac.technion.socialmoneyexchange.MainFragment"
-        android:label="MainFragment">
+    >
+<!--        android:label="MainFragment"-->
         <action
             android:id="@+id/action_mainFragment_to_settingsFragment"
             app:destination="@id/settingsFragment"/>
@@ -31,21 +32,28 @@
     <fragment
             android:id="@+id/settingsFragment"
             android:name="il.ac.technion.socialmoneyexchange.SettingsFragment"
-            android:label="fragment_settings">
+        >
+<!--            android:label="fragment_settings"-->
     </fragment>
     <fragment
             android:id="@+id/loginFragment"
             android:name="il.ac.technion.socialmoneyexchange.LoginFragment"
-            android:label="fragment_login"
-            tools:layout="@layout/fragment_login"/>
+            tools:layout="@layout/fragment_login"
+        />
+<!--            android:label="fragment_login"-->
+
     <fragment
         android:id="@+id/userProfilePublicFragment"
         android:name="il.ac.technion.socialmoneyexchange.UserProfilePublicFragment"
-        android:label="fragment_user_profile_public"
         tools:layout="@layout/fragment_user_profile_public" />
+<!--        android:label="fragment_user_profile_public"-->
     <fragment
         android:id="@+id/aboutFragment"
         android:name="il.ac.technion.socialmoneyexchange.AboutFragment"
-        android:label="fragment_about"
         tools:layout="@layout/fragment_about" />
+    <fragment
+        android:id="@+id/requestFragment"
+        android:name="il.ac.technion.socialmoneyexchange.RequestFragment"
+        tools:layout="@layout/fragment_request" />
+    <!--        android:label="fragment_about"-->
 </navigation>

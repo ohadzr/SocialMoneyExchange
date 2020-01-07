@@ -22,8 +22,10 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -143,7 +145,7 @@ class MainFragment : Fragment() {
             AuthUI.getInstance()
                 .createSignInIntentBuilder()
                 .setAvailableProviders(providers)
-                .setLogo(R.drawable.technion_logo_en_blue)
+                .setLogo(R.drawable.swap_trans)
                 .setTosAndPrivacyPolicyUrls(
                     "https://img.memecdn.com/terms-of-service_o_1982727.webp",
                     "https://images7.memedroid.com/images/UPLOADED289/5b1bcf917d930.jpeg")

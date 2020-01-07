@@ -17,17 +17,26 @@
         android:clipToPadding="false"
         android:padding="2dp"
         android:paddingTop="2dp">
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12dp"
+            android:text="Please choose what currency you want to give"
+            android:textSize="20sp">
 
-
+        </com.google.android.material.textview.MaterialTextView>
 
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="12dp"
-            android:text="Please choose what currency you want to give"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="260dp"
+            android:text="Please choose what currencies you want to receive"
             android:textSize="20sp">
 
         </com.google.android.material.textview.MaterialTextView>

@@ -21,36 +21,47 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
-import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.onNavDestinationSelected
+import androidx.navigation.ui.*
 import com.firebase.ui.auth.AuthUI
 import com.google.android.material.navigation.NavigationView
 import il.ac.technion.socialmoneyexchange.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var drawerLayout : DrawerLayout
+    private lateinit var navView : NavigationView
+    private lateinit var appBarConfiguration: AppBarConfiguration
+    private lateinit var navController : NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
 
         drawerLayout = binding.drawerLayout
-        val navController = this.findNavController(R.id.nav_host_fragment)
+        navView = binding.navView
+        navController = this.findNavController(R.id.nav_host_fragment)
+
         NavigationUI.setupActionBarWithNavController(this, navController, drawerLayout)
         NavigationUI.setupWithNavController(binding.navView, navController)
 
         supportActionBar?.setDisplayShowTitleEnabled(false)
-
-//        navView = findViewById(R.id.nav_host_fragment)
-//        navView.setNavigationItemSelectedListener(this)
+        navView.setNavigationItemSelectedListener(this)
 
     }
+
+    override fun onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
+        }
+    }
+
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = this.findNavController(R.id.nav_host_fragment)
@@ -58,21 +69,27 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-//    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-//        Toast.makeText(this, "CLICK", Toast.LENGTH_SHORT).show()
-//        // Handle presses on the action bar menu items
-//        Log.i("ohad", item.toString())
-//        when (item.itemId) {
-//            R.id.action_logout -> {
-//                AuthUI.getInstance().signOut(this)
-//                Toast.makeText(this, "Logging out", Toast.LENGTH_SHORT).show()
-//                return true
-//            }
-//        }
-//
-//        drawerLayout.closeDrawer(GravityCompat.START)
-//        return super.onOptionsItemSelected(item)
-//    }
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        // Handle presses on the action bar menu items
+        Log.i("ohad", item.toString())
+        when (item.itemId) {
+            R.id.requestFragment -> {
+            }
+            R.id.userProfilePublicFragment -> {
+            }
+            R.id.aboutFragment -> {
+            }
+            R.id.action_logout -> {
+                AuthUI.getInstance().signOut(this)
+                Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        drawerLayout.closeDrawer(GravityCompat.START)
+        return NavigationUI.onNavDestinationSelected(item, navController)
+                || super.onOptionsItemSelected(item)
+    }
+
 
 
 }

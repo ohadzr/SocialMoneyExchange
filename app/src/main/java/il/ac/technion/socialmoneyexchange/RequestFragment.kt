@@ -42,19 +42,14 @@ class RequestFragment : Fragment() {
             val currency = Currency("temp", 0)
             pickedCoin.add(currency)
         }
-        val spinner =
-            com.toptoche.searchablespinnerlibrary.SearchableSpinner(requireContext())
-        spinner.layoutParams = RelativeLayout.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        spinner.adapter = ArrayAdapter<String>(
-            requireContext(),
-            android.R.layout.simple_list_item_1,
-            coinList
-        )
-        spinner.setTitle("Select a currency")
 
+        //first spinner - giving currency
+        val spinner = com.toptoche.searchablespinnerlibrary.SearchableSpinner(requireContext())
+        spinner.layoutParams = RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT)
+        spinner.adapter = ArrayAdapter<String>(requireContext(), android.R.layout.simple_list_item_1,
+            coinList)
+        spinner.setTitle("Select a currency")
         val spinnerParam = spinner.layoutParams as RelativeLayout.LayoutParams
         val spinnerEdgeDist = dpToPx(requireContext(),0).toInt()
         val spinnerTopDist = dpToPx(requireContext(),70).toInt()
@@ -64,17 +59,13 @@ class RequestFragment : Fragment() {
         spinner.onItemSelectedListener =
             (object : AdapterView.OnItemSelectedListener {
                 override fun onNothingSelected(p0: AdapterView<*>?) {}
-                override fun onItemSelected(
-                    parent: AdapterView<*>?,
-                    view: View?,
-                    position: Int,
-                    id: Long
+                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long
                 ) {
 
 
                 }
             })
-        spinnerList.add(spinner)
+        //spinnerList.add(spinner)
         layout.addView(spinner)
         val myButtonAdd = com.google.android.material.button.MaterialButton(requireContext())
         myButtonAdd.layoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
@@ -85,6 +76,8 @@ class RequestFragment : Fragment() {
         addParam.marginStart = addEdgeDist
         myButtonAdd.layoutParams = addParam
         myButtonAdd.text = "Add"
+        layout.addView(myButtonAdd)
+
         val myButtonRemove = com.google.android.material.button.MaterialButton(requireContext())
         myButtonRemove.layoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         val removeParam = myButtonRemove.layoutParams as RelativeLayout.LayoutParams
@@ -97,12 +90,12 @@ class RequestFragment : Fragment() {
         myButtonRemove.text = "Remove"
         addButtonClicked(spinnerList,inputTextList,myAddedCoins,coinList,layout,myButtonRemove,pickedCoin)
         myAddedCoins++
-//        mySpinner.adapter = adapterTest
         myButtonAdd.setOnClickListener {
             val added = addButtonClicked(spinnerList,inputTextList,myAddedCoins,coinList,layout,myButtonRemove,pickedCoin)
             if(added)
                 myAddedCoins++
         }
+
         myButtonRemove.setOnClickListener{
             if(myAddedCoins.equals(2F)){
                 layout.removeView(myButtonRemove)
@@ -113,7 +106,7 @@ class RequestFragment : Fragment() {
             spinnerList.removeAt(myAddedCoins.toInt()-1)
             myAddedCoins--
         }
-        layout.addView(myButtonAdd)
+
 
         view.submit_button_request.setOnClickListener {
             var pickedString = ""
@@ -208,7 +201,7 @@ class RequestFragment : Fragment() {
                     ) {
                         val tempString = coinList[position]
                         pickedCoin[tempCoins.toInt()].type=tempString
-                        Toast.makeText(requireContext(),tempCoins.toString(),Toast.LENGTH_SHORT).show()
+                        //Toast.makeText(requireContext(),tempCoins.toString(),Toast.LENGTH_SHORT).show()
 
                     }
                 })
@@ -216,6 +209,7 @@ class RequestFragment : Fragment() {
             layout.addView(spinner)
             inputTextList.add(amountText)
             layout.addView(amountText)
+//            Toast.makeText(requireContext(), "Added ", Toast.LENGTH_SHORT).show()
             return true
         }
         else{

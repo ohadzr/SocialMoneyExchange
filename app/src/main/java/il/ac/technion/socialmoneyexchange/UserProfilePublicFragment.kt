@@ -32,7 +32,7 @@ class UserProfilePublicFragment : Fragment() {
         reviewRecyclerView.layoutManager = linearLayoutManager
 
         //Load review into ArrayList
-        // TODO: dynamically load real reviews..
+        // TODO: dynamically load real reviews
         val reviewList = ArrayList<String>()
         reviewList.add("review1")
         reviewList.add("review2")

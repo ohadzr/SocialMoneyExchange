@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/requestFragment"
+        android:title="@string/new_request" />
+    <item
+        android:id="@+id/userProfilePublicFragment"
+        android:title="@string/profile_title" />
+    <item
+        android:id="@+id/aboutFragment"
+        android:title="@string/about_title" />
+
+    <item
+        android:id="@+id/action_login_logout"
+        android:title="@string/logout_button_text" />
+</menu>

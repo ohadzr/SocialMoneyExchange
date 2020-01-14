@@ -140,5 +140,9 @@
     <string name="Select_currency">Select a currency</string>
     <string name="about_title">About</string>
     <string name="profile_title">Profile</string>
+    <string name="new_request">New request</string>
+    <string name="transaction_history">Transaction History:</string>
+    <string name="terms_of_service_url">https://img.memecdn.com/terms-of-service_o_1982727.webp</string>
+    <string name="privacy_policy_url">https://images7.memedroid.com/images/UPLOADED289/5b1bcf917d930.jpeg</string>
 
 </resources>

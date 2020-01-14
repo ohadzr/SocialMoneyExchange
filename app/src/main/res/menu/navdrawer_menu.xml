@@ -3,7 +3,7 @@
 
     <item
         android:id="@+id/requestFragment"
-        android:title="New request" />
+        android:title="@string/new_request" />
     <item
         android:id="@+id/userProfilePublicFragment"
         android:title="@string/profile_title" />
@@ -12,6 +12,6 @@
         android:title="@string/about_title" />
 
     <item
-        android:id="@+id/action_logout"
+        android:id="@+id/action_login_logout"
         android:title="@string/logout_button_text" />
 </menu>

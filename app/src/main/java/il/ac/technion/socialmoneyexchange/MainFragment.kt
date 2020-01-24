@@ -1,23 +1,20 @@
 
 package il.ac.technion.socialmoneyexchange
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import il.ac.technion.socialmoneyexchange.databinding.FragmentMainBinding
-import com.firebase.ui.auth.AuthUI
-import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.*
 
 class MainFragment : Fragment() {
 
@@ -26,11 +23,15 @@ class MainFragment : Fragment() {
 //    private val viewModel by viewModels<LoginViewModel>()
     private lateinit var binding: FragmentMainBinding
     private lateinit var linearLayoutManager: LinearLayoutManager
+    private lateinit var database: FirebaseDatabase
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_main, container, false)
+
+        database = FirebaseDatabase.getInstance()
 
         return binding.root
     }
@@ -39,15 +40,46 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 //        observeAuthenticationState()
 
+        //TODO: add here - show logo for 3 seconds
+
+        val currentFirebaseUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
+
+        // if no user is connect
+        while (currentFirebaseUser == null) {
+            val action = MainFragmentDirections.actionMainFragmentToLogoFragment()
+            findNavController().navigate(action)
+            return
+        }
+
+
+        // if user is connected but not in database
+        val userId = currentFirebaseUser.uid
+        val userRef: DatabaseReference = database.getReference("users").child(userId)
+
+        userRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // This method is triggered once when the listener is attached and again
+                // every time the data, including children, changes.
+                // value can be String, Long, Double, Boolean, Map<String, Object>, List<Object>
+                val firstName = dataSnapshot.child("firstName").getValue(String::class.java)
+                if (firstName == null) {
+                    val action = MainFragmentDirections.actionMainFragmentToNewUserFragment()
+                    findNavController().navigate(action)
+                    return
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Failed to read value
+                Log.w("ohad", "Failed to read value.", error.toException())
+            }
+        })
+
+
         binding.requestButton.setOnClickListener{
             val action = MainFragmentDirections.actionMainFragmentToRequestFragment()
             findNavController().navigate(action)
         }
-//        binding.authButton.setOnClickListener { launchSignInFlow() }
-//        binding.settingsBtn.setOnClickListener {
-//            val action = MainFragmentDirections.actionMainFragmentToSettingsFragment()
-//            findNavController().navigate(action)
-//        }
 
         val reviewRecyclerView = binding.reviewRecyclerView
         linearLayoutManager = LinearLayoutManager(requireContext())

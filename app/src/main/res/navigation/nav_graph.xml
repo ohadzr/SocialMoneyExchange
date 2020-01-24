@@ -12,6 +12,12 @@
         <action
             android:id="@+id/action_mainFragment_to_requestFragment"
             app:destination="@id/requestFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_logoFragment"
+            app:destination="@id/logoFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_newUserFragment"
+            app:destination="@id/newUserFragment" />
     </fragment>
     <fragment
             android:id="@+id/settingsFragment"
@@ -39,5 +45,13 @@
         android:id="@+id/requestFragment"
         android:name="il.ac.technion.socialmoneyexchange.RequestFragment"
         tools:layout="@layout/fragment_request" />
+    <fragment
+        android:id="@+id/newUserFragment"
+        android:name="il.ac.technion.socialmoneyexchange.NewUserFragment"
+        android:label="NewUserFragment" />
+    <fragment
+        android:id="@+id/logoFragment"
+        android:name="il.ac.technion.socialmoneyexchange.LogoFragment"
+        android:label="LogoFragment" />
     <!--        android:label="fragment_about"-->
 </navigation>

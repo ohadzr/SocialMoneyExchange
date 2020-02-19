@@ -4,7 +4,7 @@
             xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/nav_graph"
-            app:startDestination="@id/mainFragment">
+            app:startDestination="@id/acknowledgeTransactionFragment">
     <fragment
         android:id="@+id/mainFragment"
         android:name="il.ac.technion.socialmoneyexchange.MainFragment"
@@ -53,5 +53,9 @@
         android:id="@+id/logoFragment"
         android:name="il.ac.technion.socialmoneyexchange.LogoFragment"
         android:label="LogoFragment" />
+    <fragment
+        android:id="@+id/acknowledgeTransactionFragment"
+        android:name="il.ac.technion.socialmoneyexchange.AcknowledgeTransactionFragment"
+        android:label="AcknowledgeTransactionFragment" />
     <!--        android:label="fragment_about"-->
 </navigation>

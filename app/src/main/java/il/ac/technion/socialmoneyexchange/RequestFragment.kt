@@ -15,13 +15,13 @@ import android.view.inputmethod.EditorInfo
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textview.MaterialTextView
-import com.google.gson.GsonBuilder
+//import com.google.gson.GsonBuilder
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.internal.schedulers.IoScheduler
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+//import io.reactivex.android.schedulers.AndroidSchedulers
+//import io.reactivex.internal.schedulers.IoScheduler
+//import retrofit2.Retrofit
+//import retrofit2.converter.gson.GsonConverterFactory
+//import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 //import rx.android.schedulers.AndroidSchedulers
 
 class RequestFragment : Fragment() {

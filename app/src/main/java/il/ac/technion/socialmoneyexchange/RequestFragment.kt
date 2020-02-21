@@ -50,16 +50,16 @@ class RequestFragment : Fragment() {
         coinList.add("five")
         coinList.add("one")
 
-//        var mydictionary : Rates
-//        //internet
-//
+
+        //internet
+
 //        val retrofit = Retrofit.Builder().addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
 //            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
 //            .baseUrl("https://api.exchangeratesapi.io/").build()
 //        val ratesApi = retrofit.create(RatesAPI::class.java)
 //        var response = ratesApi.getRates()
 //        response.observeOn(IoScheduler()).subscribeOn(AndroidSchedulers.mainThread()).subscribe(
-//            mydictionary
+//
 //        )
 
         var myAddedCoins = 0F
@@ -99,8 +99,6 @@ class RequestFragment : Fragment() {
                     myCurrency = coinList[position]
                 }
             })
-
-
         layout.addView(spinner)
 
         //input text for giving
@@ -205,7 +203,6 @@ class RequestFragment : Fragment() {
         return view
     }
     @SuppressLint("RestrictedApi")
-
     private fun addButtonClicked(spinnerList:ArrayList<SearchableSpinner>, inputTextList:ArrayList<MaterialTextView>,
                                  addedCoins:Float, coinList:ArrayList<String>, layout:RelativeLayout, removeButton:Button, requestedCurrencies:ArrayList<String>):Boolean{
         if(addedCoins < MAX_CURRENECIES) {

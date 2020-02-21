@@ -42,6 +42,8 @@ class NewUserFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        Toast.makeText(requireContext(), "Please fill all fields", Toast.LENGTH_SHORT).show()
+
         binding.nextButton.setOnClickListener{
 
             hideKeyboard()

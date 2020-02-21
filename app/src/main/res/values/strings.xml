@@ -144,5 +144,11 @@
     <string name="transaction_history">Transaction History:</string>
     <string name="terms_of_service_url">https://img.memecdn.com/terms-of-service_o_1982727.webp</string>
     <string name="privacy_policy_url">https://images7.memedroid.com/images/UPLOADED289/5b1bcf917d930.jpeg</string>
+    <string name="coin_name">Coin name</string>
+    <string name="coin_value">Coin value</string>
+    <string name="exchange_rate">Exchange rate</string>
+    <string name="accept_transaction">Save &amp; Accept Transaction</string>
+    <string name="reset">Reset</string>
+    <string name="decline_transaction">Decline transaction</string>
 
 </resources>

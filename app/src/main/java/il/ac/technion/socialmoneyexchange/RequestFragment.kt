@@ -194,7 +194,7 @@ class RequestFragment : Fragment() {
                 val randomId = randomAlphaNumericString(32)
                 val transactionRef: DatabaseReference =
                     database.getReference("transactionRequests").child(randomId)
-                val temp=transactionRef.setValue(newTansactionRequest)
+                transactionRef.setValue(newTansactionRequest)
                 Toast.makeText(requireContext(),"Successfully submitted your request", Toast.LENGTH_SHORT).show()
                 findNavController().popBackStack()
             }

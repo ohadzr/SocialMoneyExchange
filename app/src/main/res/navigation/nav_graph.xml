@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/nav_graph"
-            app:startDestination="@id/acknowledgeTransactionFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@+id/mainFragment">
     <fragment
         android:id="@+id/mainFragment"
-        android:name="il.ac.technion.socialmoneyexchange.MainFragment"
-    >
+        android:name="il.ac.technion.socialmoneyexchange.MainFragment">
         <action
             android:id="@+id/action_mainFragment_to_requestFragment"
             app:destination="@id/requestFragment" />
@@ -20,23 +19,21 @@
             app:destination="@id/newUserFragment" />
     </fragment>
     <fragment
-            android:id="@+id/settingsFragment"
-            android:name="il.ac.technion.socialmoneyexchange.SettingsFragment"
-        >
-<!--            android:label="fragment_settings"-->
+        android:id="@+id/settingsFragment"
+        android:name="il.ac.technion.socialmoneyexchange.SettingsFragment">
+        <!--            android:label="fragment_settings"-->
     </fragment>
     <fragment
-            android:id="@+id/loginFragment"
-            android:name="il.ac.technion.socialmoneyexchange.LoginFragment"
-            tools:layout="@layout/fragment_login"
-        />
-<!--            android:label="fragment_login"-->
+        android:id="@+id/loginFragment"
+        android:name="il.ac.technion.socialmoneyexchange.LoginFragment"
+        tools:layout="@layout/fragment_login" />
+    <!--            android:label="fragment_login"-->
 
     <fragment
         android:id="@+id/userProfilePublicFragment"
         android:name="il.ac.technion.socialmoneyexchange.UserProfilePublicFragment"
         tools:layout="@layout/fragment_user_profile_public" />
-<!--        android:label="fragment_user_profile_public"-->
+    <!--        android:label="fragment_user_profile_public"-->
     <fragment
         android:id="@+id/aboutFragment"
         android:name="il.ac.technion.socialmoneyexchange.AboutFragment"

@@ -22,8 +22,15 @@ import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.gson.GsonBuilder
 import il.ac.technion.socialmoneyexchange.databinding.ActivityMainBinding
+import okhttp3.*
+import java.io.IOException
 
+object GlobalVariable {
+
+    lateinit var apiData: CurrencyApi
+}
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     companion object {
@@ -54,8 +61,30 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         supportActionBar?.setDisplayShowTitleEnabled(false)
         navView.setNavigationItemSelectedListener(this)
+        fetchData()
     }
 
+    private fun fetchData() {
+        val url = "https://api.exchangeratesapi.io/latest"
+        val request = Request.Builder().url(url).build()
+        val client = OkHttpClient()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onResponse(call: Call, response: Response) {
+                val body = response.body()?.string()
+//
+                val gson = GsonBuilder().create()
+                runOnUiThread {
+                    GlobalVariable.apiData = gson.fromJson(body,CurrencyApi::class.java)
+                }
+
+            }
+            override fun onFailure(call: Call, e: IOException) {
+
+            }
+        })
+
+    }
     override fun onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)

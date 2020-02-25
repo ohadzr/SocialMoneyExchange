@@ -282,7 +282,9 @@ class RequestFragment : Fragment() {
         if(myCurrency != "EUR") {
             println("here")
             println("my currency is $myCurrency")
-            myRate = apiData.rates[myCurrency]!!
+            if (apiData.rates[myCurrency] != null){
+                myRate = apiData.rates[myCurrency]!!
+            }
             println(myRate)
         }
         println("here")

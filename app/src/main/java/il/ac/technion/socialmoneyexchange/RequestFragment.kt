@@ -61,7 +61,6 @@ class RequestFragment : Fragment() {
             requestedCurrencies.add(currency)
         }
         coinList.addAll(apiData.rates.keys.toList())
-        coinList.add("EUR")
         //first spinner - giving currency
         val spinner = SearchableSpinner(requireContext())
         spinner.layoutParams = RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -277,24 +276,17 @@ class RequestFragment : Fragment() {
     }
 
     fun updateAmount(requestedAmount:Int, myCurrency:String, requestedCurrencies: ArrayList<String>, inputTextList: ArrayList<MaterialTextView>,addedCoins: Float){
-        var myRate = 1.0
-        var requestedCurrencyAmount:Double
-        if(myCurrency != "EUR") {
-            println("here")
-            println("my currency is $myCurrency")
-            if (apiData.rates[myCurrency] != null){
-                myRate = apiData.rates[myCurrency]!!
+        var myRate: Double
+        if (apiData.rates[myCurrency] != null){
+            myRate =
+                apiData.rates[myCurrency]!!
+            for(i in 0 until addedCoins.toInt()){
+                val requestedCurrencyAmount = (apiData.rates[requestedCurrencies[i]]!!/myRate)*requestedAmount.toDouble()
+                inputTextList[i].text = requestedCurrencyAmount.toString().format("%.3f")// TODO fix it
             }
-            println(myRate)
         }
-        println("here")
-        for(i in 0 until addedCoins.toInt()){
-            requestedCurrencyAmount = if(!requestedCurrencies[i].equals("EUR"))
-                (apiData.rates[requestedCurrencies[i]]!!/myRate)*requestedAmount.toDouble()
-            else
-                (1.0/myRate)*requestedAmount.toDouble()
-            inputTextList[i].text = requestedCurrencyAmount.toString().format("%.3f")// TODO fix it
-        }
+        
+
     }
 }
 

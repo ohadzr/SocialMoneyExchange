@@ -83,6 +83,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             }
         })
+        GlobalVariable.apiData.rates["EUR"] = 1.0
 
     }
     override fun onBackPressed() {

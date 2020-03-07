@@ -1,6 +1,6 @@
 package il.ac.technion.socialmoneyexchange
 data class CurrencyApi(
-    val rates: Map<String,Double>,
+    val rates: MutableMap<String,Double>,
     val base: String,
     val date: String
 

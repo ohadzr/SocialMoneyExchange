@@ -55,7 +55,7 @@ class NewUserFragment : Fragment() {
             }
             else {
 
-                val userInfo = User(firstName, lastName)
+                val userInfo = User(firstName=firstName, lastName=lastName)
                 val currentFirebaseUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
                 val userId = currentFirebaseUser!!.uid
                 val userRef: DatabaseReference = database.getReference("users").child(userId)

@@ -174,10 +174,25 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 android:padding="6dp"
+                android:text="@string/exchange_rate"
                 android:textAlignment="center"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/coin_value2"
+                tools:hint="@string/exchange_rate">
+
+            </TextView>
+
+            <TextView
+                android:id="@+id/exchange_rate2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:padding="6dp"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/exchange_rate"
                 tools:hint="@string/exchange_rate">
 
             </TextView>
@@ -192,13 +207,13 @@
                 android:text="@string/reset"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/exchange_rate"
+                app:layout_constraintTop_toBottomOf="@+id/exchange_rate2"
                 tools:text="@string/reset" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/accept_button"
                 style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_margin="16dp"
@@ -210,7 +225,7 @@
                 tools:text="@string/accept_transaction" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/decline_transaction"
+                android:id="@+id/decline_button"
                 style="@style/Widget.MaterialComponents.Button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

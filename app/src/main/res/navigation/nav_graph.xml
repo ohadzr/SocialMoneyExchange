@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@+id/mainFragment">
+    app:startDestination="@id/offerFragment">
     <fragment
         android:id="@+id/mainFragment"
         android:name="il.ac.technion.socialmoneyexchange.MainFragment">
@@ -41,11 +41,7 @@
     <fragment
         android:id="@+id/requestFragment"
         android:name="il.ac.technion.socialmoneyexchange.RequestFragment"
-        tools:layout="@layout/fragment_request" >
-        <action
-            android:id="@+id/action_requestFragment_to_locationFragment"
-            app:destination="@id/locationFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_request" />
     <fragment
         android:id="@+id/newUserFragment"
         android:name="il.ac.technion.socialmoneyexchange.NewUserFragment"
@@ -55,18 +51,8 @@
         android:name="il.ac.technion.socialmoneyexchange.LogoFragment"
         android:label="LogoFragment" />
     <fragment
-        android:id="@+id/acknowledgeTransactionFragment"
-        android:name="il.ac.technion.socialmoneyexchange.AcknowledgeTransactionFragment"
-        android:label="AcknowledgeTransactionFragment" />
-    <fragment
-        android:id="@+id/locationFragment"
-        android:name="il.ac.technion.socialmoneyexchange.LocationFragment"
-        android:label="fragment_location"
-        tools:layout="@layout/fragment_location" >
-        <action
-            android:id="@+id/action_locationFragment_to_requestFragment"
-            app:destination="@id/requestFragment"
-            app:popUpTo="@+id/requestFragment" />
-    </fragment>
+        android:id="@+id/offerFragment"
+        android:name="il.ac.technion.socialmoneyexchange.OfferFragment"
+        android:label="OfferFragment" />
     <!--        android:label="fragment_about"-->
 </navigation>

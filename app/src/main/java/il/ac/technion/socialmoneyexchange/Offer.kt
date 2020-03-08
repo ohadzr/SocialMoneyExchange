@@ -6,9 +6,10 @@ import com.google.firebase.database.IgnoreExtraProperties
 data class Offer(
     var userID1: String? = "",
     var coinName1: String? = "",
-    var coinAmount1: Float?,
+    var coinAmount1: Float? = 0F,
     var userID2: String? = "",
     var coinName2: String? = "",
-    var coinAmount2: Float?,
-    var status: String? = ""
+    var coinAmount2: Float? = 0F,
+    var status: String? = "",
+    var lastUpdater: String? = ""
     )

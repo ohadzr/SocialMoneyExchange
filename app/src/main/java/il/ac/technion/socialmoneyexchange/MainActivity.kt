@@ -76,6 +76,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 val gson = GsonBuilder().create()
                 runOnUiThread {
                     GlobalVariable.apiData = gson.fromJson(body,CurrencyApi::class.java)
+                    GlobalVariable.apiData.rates["EUR"] = 1.0
                 }
 
             }
@@ -83,7 +84,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             }
         })
-        GlobalVariable.apiData.rates["EUR"] = 1.0
+
 
     }
     override fun onBackPressed() {

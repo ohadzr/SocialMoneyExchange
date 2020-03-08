@@ -3,16 +3,17 @@ package il.ac.technion.socialmoneyexchange
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 
 
 class OfferFragment : Fragment() {
@@ -31,7 +32,6 @@ class OfferFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_offer, container, false)
 
-        //TODO: uncomment and read data from database
         database = FirebaseDatabase.getInstance()
         val currentFirebaseUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
         val userId = currentFirebaseUser!!.uid
@@ -42,12 +42,13 @@ class OfferFragment : Fragment() {
         val coinAmount1 = 100
         val coinName2 = "USD"
         val coinAmount2 = 300
-        // TODO: get rate from API
+
+        //FIXME: get this from API
         val originalRate = coinAmount1.toFloat() / coinAmount2.toFloat()
 
         val offersRef: DatabaseReference = database.getReference("offers").child(offerID)
         val userOfferRef: DatabaseReference = database.getReference("users").child(userId).child("offers")
-//        offersRef.setValue(Offer("ohad",coinName1, coinAmount1.toFloat(), "tamir",coinName2, coinAmount2.toFloat(),"active"))
+//        offersRef.setValue(Offer("ohad",coinName1, coinAmount1.toFloat(), "tamir",coinName2, coinAmount2.toFloat(),"ACTIVE"))
 //        userOfferRef.setValue(offerID)
 
         val coinName1TextView: TextView = view.findViewById(R.id.coin_name_text) as TextView
@@ -60,23 +61,29 @@ class OfferFragment : Fragment() {
         val declineButton = view.findViewById(R.id.decline_button) as Button
 
         // Load original data to text boxes for the first time
-        resetTextValues(view, coinName1, coinAmount1, coinName2, coinAmount2,
+        resetTextValues(coinName1, coinAmount1, coinName2, coinAmount2,
             coinName1TextView, coinName2TextView, coinAmount1TextView, coinAmount2TextView)
 
         // Set reset button to load original data
         resetButton.setOnClickListener {
-            resetTextValues(view, coinName1, coinAmount1, coinName2, coinAmount2,
+            resetTextValues(coinName1, coinAmount1, coinName2, coinAmount2,
                 coinName1TextView, coinName2TextView, coinAmount1TextView, coinAmount2TextView)
         }
 
         // Set save button to accept transaction and save it to DB
         saveButton.setOnClickListener {
-            saveOffer(view, coinName1, coinAmount1TextView,   coinName2, coinAmount2TextView)
+            saveOrCancelOffer(database, userId,
+                coinName1, coinAmount1TextView,
+                coinName2,coinAmount2TextView, offerID, cancel=false)
+            findNavController().popBackStack()
         }
 
         // Set decline button to cancel transaction and save it to DB
         declineButton.setOnClickListener {
-            declineOffer(view, coinName1, coinAmount1TextView, coinName2, coinAmount2TextView)
+            saveOrCancelOffer(database, userId,
+                coinName1, coinAmount1TextView,
+                coinName2, coinAmount2TextView, offerID, cancel=true)
+            findNavController().popBackStack()
         }
 
 
@@ -111,23 +118,63 @@ class OfferFragment : Fragment() {
         })
 
 
-
-
         return view
     }
 
+    private fun saveOrCancelOffer(database: FirebaseDatabase, userId: String,
+                          coinName1: String, coinAmount1TextView: TextView,
+                          coinName2: String, coinAmount2TextView: TextView,
+                          offerID: String, cancel: Boolean) {
+        val offerRef : DatabaseReference = database.getReference("offers").child(offerID)
+        // cancelling the offer
+        if (cancel){
+            offerRef.child("status").setValue("CANCELLED")
+            offerRef.child("lastUpdater").setValue(userId)
+            return
+        }
 
-//    private fun saveOffer(view: View?, coinName1: String, coinAmount1TextView: TextView, coinName2: String, coinAmount2TextView: TextView) {
-//
-//    }
-//
-//    private fun declineOffer(view: View?, coinName1: String, coinAmount1TextView: TextView, coinName2: String, coinAmount2TextView: TextView) {
-//
-//    }
+        offerRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val status = dataSnapshot.child("status").getValue(String::class.java)
+                val updaterId = dataSnapshot.child("lastUpdater").getValue(String::class.java)
+
+                when (status){
+                    // ACTIVE - first time reviewing offer
+                    "ACTIVE" -> {
+                        offerRef.child("status").setValue("PENDING")
+                        offerRef.child("coinAmount1").setValue(coinAmount1TextView.text.toString())
+                        offerRef.child("coinAmount2").setValue(coinAmount2TextView.text.toString())
+                    }
+
+                    // PENDING - at least one user reviewed offer and accepted it
+                    "PENDING" -> {
+                        if (updaterId != userId)
+                            offerRef.child("status").setValue("CONFIRMED")
+                            offerRef.child("coinAmount1").setValue(coinAmount1TextView.text.toString())
+                            offerRef.child("coinAmount2").setValue(coinAmount2TextView.text.toString())
+                    }
+
+                    // CONFIRMED - both users accepted the offer
+                    "CONFIRMED" -> offerRef.child("status").setValue("PENDING")
+
+                    // if CANCELLED or DONE - doesn't update anything
+                    else -> return
+                }
+                offerRef.child("lastUpdater").setValue(userId)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Failed to read value
+                Log.w("ohad", "Failed to read offer status.", error.toException())
+            }
+        })
+
+
+    }
+
 
     // Write data to text boxes
     private fun resetTextValues(
-        view: View?,
         coinName1: String, coinAmount1: Int, coinName2: String, coinAmount2: Int,
         coinName1TextView: TextView, coinName2TextView: TextView,
         coinAmount1TextView: TextView, coinAmount2TextView: TextView

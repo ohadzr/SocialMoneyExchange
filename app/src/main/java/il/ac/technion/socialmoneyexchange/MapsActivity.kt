@@ -26,14 +26,23 @@ import android.location.LocationManager
 import android.os.Build
 import android.os.Looper
 import android.provider.Settings
+import android.text.InputFilter
+import android.text.InputType
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
+import com.google.android.material.internal.ViewUtils
+import com.google.android.material.slider.Slider
+import com.google.android.material.textfield.TextInputEditText
 
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private val PERMISSION_ID = 1000
+    private val DEAFAULT_RADIUS = 25000.0
     private lateinit var mMap: GoogleMap
     private var chosenLocationLat = 0.0
     private var chosenLocationLong = 0.0
@@ -50,7 +59,24 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync(this)
+        if(checkLocatePermision()) {
+            mFusedLocationClient.lastLocation.addOnCompleteListener(this) { task ->
+                var location: Location? = task.result
+                if (location == null) {
+                    requestNewLocationData()
+                } else {
+                    chosenLocationLat = location.latitude
+                    chosenLocationLong = location.longitude
+                }
+                mapFragment.getMapAsync(this)
+            }
+        } else {
+            Toast.makeText(this, "Turn on location", Toast.LENGTH_LONG).show()
+            val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+            startActivity(intent)
+            mapFragment.getMapAsync(this)
+        }
+
     }
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (requestCode == PERMISSION_ID) {
@@ -75,84 +101,57 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         return false
     }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
-    @SuppressLint("MissingPermission")
+    @SuppressLint("MissingPermission", "RestrictedApi")
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-//        var finished = false
-        if(checkLocatePermision()) {
-//            var locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-//            var hasGPS =locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-//            if(hasGPS) {
-//                println("..Im HERE")
-//
-//                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,5000,0f,object:LocationListener{
-//                    override fun onLocationChanged(location: Location?) {
-//                        println("0Im HERE")
-//                        if(location!=null)
-//                            locationGPS = location
-//                    }
-//
-//                    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
-//                    }
-//
-//                    override fun onProviderEnabled(provider: String?) {
-//                    }
-//
-//                    override fun onProviderDisabled(provider: String?) {
-//                    }
-//                })
-//                if(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)!=null) {
-//                    locationGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-//                    println("1Im HERE")
-//
-//                }
-////                chosenLocationLat = locationGPS.latitude
-////                chosenLocationLong = locationGPS.longitude
-//            }
-            mFusedLocationClient.lastLocation.addOnCompleteListener(this) { task ->
-                var location: Location? = task.result
-                if (location == null) {
-                    requestNewLocationData()
-                } else {
-                    chosenLocationLat = location.latitude
-                    chosenLocationLong = location.longitude
-                    println("FIRST"+chosenLocationLat.toString()+" "+chosenLocationLong.toString())
-
-                }
-//                finished = true
-            }
-        } else {
-            Toast.makeText(this, "Turn on location", Toast.LENGTH_LONG).show()
-            val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-            startActivity(intent)
+        var selectedRadius = DEAFAULT_RADIUS
+        val tempRadius = intent.getStringExtra("Radius")
+        if(!tempRadius.isNullOrEmpty()&&tempRadius.toDouble()!=0.0) {
+            chosenLocationLat=intent.getStringExtra("Lat").toDouble()
+            chosenLocationLong=intent.getStringExtra("Long").toDouble()
+            selectedRadius = intent.getStringExtra("Radius").toDouble()
         }
-        val circleOptions = CircleOptions()
-            .center(LatLng(37.4, -122.1))
-            .radius(100000.0) // In meters
-            .strokeColor(Color.BLUE)
-
-// Get back the mutable Circle
-//        while(!finished){}
-        println(chosenLocationLat.toString()+" "+chosenLocationLong.toString())
         val chosenLocation = LatLng(chosenLocationLat,chosenLocationLong)
-        val circle = mMap.addCircle(circleOptions)
-        mMap.setOnCircleClickListener {  }
+        val circleOptions = CircleOptions().apply {
+            center(chosenLocation)
+            radius(selectedRadius)
+            strokeColor(Color.BLUE)
 
+            fillColor(Color.argb(90,0,0,150))
+//            clickable(true)
+
+        }
+
+        val circle = mMap.addCircle(circleOptions)
+//        mMap.setOnCircleClickListener {circle -> circleOptions.radius = circle.radius }
         var marker=mMap.addMarker(MarkerOptions().position(chosenLocation))
 
-        mMap.setOnMapClickListener({ latLng -> marker.position=latLng})
-
+        mMap.setOnMapClickListener { latLng ->
+            marker.position=latLng
+            circle.center = latLng
+        }
         mMap.moveCamera(CameraUpdateFactory.newLatLng(chosenLocation))
         mMap.animateCamera((CameraUpdateFactory.newLatLngZoom(chosenLocation,8f)))
+        val slider:Slider = findViewById(R.id.slider_map)
+        slider.setOnChangeListener{slider: Slider?, value: Float ->
+            circle.radius = value.toDouble()*1000.0
+        }
+
+        val button:Button = findViewById(R.id.map_done)
+        button.setOnClickListener{
+            val intent = Intent(this,MainActivity::class.java)
+            intent.putExtra("fromMap","True")
+            intent.putExtra("Radius",circle.radius.toString())
+            intent.putExtra("Lat",marker.position.latitude.toString())
+            intent.putExtra("Long",marker.position.longitude.toString())
+//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            startActivity(intent)
+            finish()
+
+
+        }
+
+
 
 
 

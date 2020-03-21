@@ -31,6 +31,7 @@ object GlobalVariable {
 
     lateinit var apiData: CurrencyApi
 }
+@Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     companion object {
@@ -48,10 +49,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
-
+        val intent = intent
         drawerLayout = binding.drawerLayout
         navView = binding.navView
-
         observeAuthenticationState()
 
         navController = this.findNavController(R.id.nav_host_fragment)
@@ -61,32 +61,41 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         supportActionBar?.setDisplayShowTitleEnabled(false)
         navView.setNavigationItemSelectedListener(this)
-        fetchData()
+
+        if(!intent.getStringExtra("fromMap").isNullOrEmpty()) {
+            val bundle = Bundle()
+            bundle.putDouble("Radius",intent.getStringExtra("Radius").toDouble())
+            bundle.putDouble("Lat",intent.getStringExtra("Lat").toDouble())
+            bundle.putDouble("Long",intent.getStringExtra("Long").toDouble())
+            navController?.navigate(R.id.requestFragment, bundle)
+
+        }
+
     }
 
-    private fun fetchData() {
-        val url = "https://api.exchangeratesapi.io/latest"
-        val request = Request.Builder().url(url).build()
-        val client = OkHttpClient()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onResponse(call: Call, response: Response) {
-                val body = response.body()?.string()
+//    private fun fetchData() {
+//        val url = "https://api.exchangeratesapi.io/latest"
+//        val request = Request.Builder().url(url).build()
+//        val client = OkHttpClient()
 //
-                val gson = GsonBuilder().create()
-                runOnUiThread {
-                    GlobalVariable.apiData = gson.fromJson(body,CurrencyApi::class.java)
-                    GlobalVariable.apiData.rates["EUR"] = 1.0
-                }
-
-            }
-            override fun onFailure(call: Call, e: IOException) {
-
-            }
-        })
-
-
-    }
+//        client.newCall(request).enqueue(object : Callback {
+//            override fun onResponse(call: Call, response: Response) {
+//                val body = response.body()?.string()
+////
+//                val gson = GsonBuilder().create()
+//                runOnUiThread {
+//                    GlobalVariable.apiData = gson.fromJson(body,CurrencyApi::class.java)
+//                    GlobalVariable.apiData.rates["EUR"] = 1.0
+//                }
+//
+//            }
+//            override fun onFailure(call: Call, e: IOException) {
+//
+//            }
+//        })
+//
+//
+//    }
     override fun onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)

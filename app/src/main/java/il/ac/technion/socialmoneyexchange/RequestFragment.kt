@@ -2,6 +2,7 @@ package il.ac.technion.socialmoneyexchange
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.text.InputType
@@ -13,11 +14,7 @@ import android.widget.*
 import com.google.android.material.internal.ViewUtils.dpToPx
 import kotlinx.android.synthetic.main.fragment_request.view.*
 import android.text.InputFilter
-import android.view.WindowInsets
-import android.view.inputmethod.EditorInfo
 import androidx.annotation.RequiresApi
-import androidx.navigation.Navigation
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
@@ -26,9 +23,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.gson.GsonBuilder
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
-import il.ac.technion.socialmoneyexchange.GlobalVariable.apiData
-import kotlinx.android.synthetic.main.activity_main.*
+import okhttp3.*
+import java.io.IOException
 import java.text.SimpleDateFormat
 
 import java.util.*
@@ -42,22 +40,27 @@ class RequestFragment : Fragment() {
     private var message = ""
     private val MAX_MONEY_DIGITS = 6
     lateinit var inputText : TextInputEditText
+    private lateinit var myApi :CurrencyApi
+    var latitude: Double = 0.0
+    var longitude: Double = 0.0
+    var radius: Double = Double.MAX_VALUE
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n", "RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        message = savedInstanceState?.getString("Message1").toString()
-        if(arguments!=null)
-            message = arguments!!.getString("Message1").toString()
+        if(arguments!=null) {
+            radius = arguments!!.getDouble("Radius")
+            latitude = arguments!!.getDouble("Lat")
+            longitude = arguments!!.getDouble("Long")
+        }
     }
     @SuppressLint("RestrictedApi")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-
-
-
-
+        val url = "https://api.exchangeratesapi.io/latest"
+        val request = Request.Builder().url(url).build()
+        val client = OkHttpClient()
         val coinList = ArrayList<String>()
         var myAddedCoins = 0F
         var myCurrency = ""
@@ -66,112 +69,152 @@ class RequestFragment : Fragment() {
         val spinnerList = ArrayList<SearchableSpinner>()
         val inputTextList = ArrayList<MaterialTextView>()
         val requestedCurrencies = ArrayList<String>()
-        for (i in 0..MAX_CURRENECIES.toInt()) {
-            val currency = ""
-            requestedCurrencies.add(currency)
-        }
-        coinList.addAll(apiData.rates.keys.toList())
-        //first spinner - giving currency
-        val spinner = SearchableSpinner(requireContext())
-        spinner.layoutParams = RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT)
-        spinner.adapter = ArrayAdapter<String>(requireContext(), android.R.layout.simple_list_item_1,
-            coinList)
-        spinner.setTitle("Select a currency")
-        val spinnerParam = spinner.layoutParams as RelativeLayout.LayoutParams
-        val spinnerEdgeDist = dpToPx(requireContext(),0).toInt()
-        val spinnerTopDist = dpToPx(requireContext(),70).toInt()
-        spinnerParam.topMargin = spinnerTopDist
-        spinnerParam.marginStart = spinnerEdgeDist
-        spinner.layoutParams = spinnerParam
-        spinner.onItemSelectedListener =
-            (object : AdapterView.OnItemSelectedListener {
-                override fun onNothingSelected(p0: AdapterView<*>?) {}
-                override fun onItemSelected(
-                    parent: AdapterView<*>?,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    myCurrency = coinList[position]
+        client.newCall(request).enqueue(object : Callback {
+            override fun onResponse(call: Call, response: Response) {
+
+                val body = response.body()?.string()
+                val gson = GsonBuilder().create()
+
+                myApi = gson.fromJson(body,CurrencyApi::class.java)
+                myApi.rates["EUR"] = 1.0
+                for (i in 0..MAX_CURRENECIES.toInt()) {
+                    val currency = ""
+                    requestedCurrencies.add(currency)
+                }
+                coinList.addAll(myApi.rates.keys.toList())
+                //first spinner - giving currency
+                val spinner = SearchableSpinner(requireContext())
+                spinner.layoutParams = RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT)
+                spinner.adapter = ArrayAdapter<String>(requireContext(), android.R.layout.simple_list_item_1,
+                    coinList)
+                spinner.setTitle("Select a currency")
+                val spinnerParam = spinner.layoutParams as RelativeLayout.LayoutParams
+                val spinnerEdgeDist = dpToPx(requireContext(),0).toInt()
+                val spinnerTopDist = dpToPx(requireContext(),70).toInt()
+                spinnerParam.topMargin = spinnerTopDist
+                spinnerParam.marginStart = spinnerEdgeDist
+                spinner.layoutParams = spinnerParam
+                spinner.onItemSelectedListener =
+                    (object : AdapterView.OnItemSelectedListener {
+                        override fun onNothingSelected(p0: AdapterView<*>?) {}
+                        override fun onItemSelected(
+                            parent: AdapterView<*>?,
+                            view: View?,
+                            position: Int,
+                            id: Long
+                        ) {
+                            myCurrency = coinList[position]
+                            if(!inputText.text.isNullOrEmpty())
+                                updateAmount(inputText.text.toString().toInt(), myCurrency, requestedCurrencies, inputTextList,myAddedCoins)
+
+                        }
+                    })
+
+                //input text for giving
+                inputText = TextInputEditText(requireContext())
+                inputText.layoutParams = RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT)
+                val inputTextParam = inputText.layoutParams as RelativeLayout.LayoutParams
+                val inputTextEdgeDist = dpToPx(requireContext(),130).toInt()
+                val inputTextTopDist = dpToPx(requireContext(),70).toInt()
+                inputTextParam.topMargin = inputTextTopDist
+                inputTextParam.marginStart = inputTextEdgeDist
+                inputText.layoutParams = inputTextParam
+                inputText.hint="Insert amount"
+                inputText.inputType = InputType.TYPE_CLASS_NUMBER
+                inputText.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(MAX_MONEY_DIGITS))
+                inputText.setOnClickListener{v ->
                     if(!inputText.text.isNullOrEmpty())
                         updateAmount(inputText.text.toString().toInt(), myCurrency, requestedCurrencies, inputTextList,myAddedCoins)
 
                 }
-            })
-        layout.addView(spinner)
 
-        //input text for giving
-        inputText = TextInputEditText(requireContext())
-        inputText.layoutParams = RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT)
-        val inputTextParam = inputText.layoutParams as RelativeLayout.LayoutParams
-        val inputTextEdgeDist = dpToPx(requireContext(),130).toInt()
-        val inputTextTopDist = dpToPx(requireContext(),70).toInt()
-        inputTextParam.topMargin = inputTextTopDist
-        inputTextParam.marginStart = inputTextEdgeDist
-        inputText.layoutParams = inputTextParam
-        inputText.hint="Insert amount"
-        inputText.inputType = InputType.TYPE_CLASS_NUMBER
-        inputText.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(MAX_MONEY_DIGITS))
-        inputText.setOnClickListener{v ->
-            if(!inputText.text.isNullOrEmpty())
-                updateAmount(inputText.text.toString().toInt(), myCurrency, requestedCurrencies, inputTextList,myAddedCoins)
+                val myButtonAdd = MaterialButton(requireContext())
+                myButtonAdd.layoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                val addParam = myButtonAdd.layoutParams as RelativeLayout.LayoutParams
+                val addEdgeDist = dpToPx(requireContext(),12).toInt()
+                val addTopDist = dpToPx(requireContext(),222).toInt()
+                addParam.topMargin = addTopDist
+                addParam.marginStart = addEdgeDist
+                myButtonAdd.layoutParams = addParam
+                myButtonAdd.text = "Add"
 
-        }
 
-        layout.addView(inputText)
-
-        val myButtonAdd = MaterialButton(requireContext())
-        myButtonAdd.layoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        val addParam = myButtonAdd.layoutParams as RelativeLayout.LayoutParams
-        val addEdgeDist = dpToPx(requireContext(),12).toInt()
-        val addTopDist = dpToPx(requireContext(),222).toInt()
-        addParam.topMargin = addTopDist
-        addParam.marginStart = addEdgeDist
-        myButtonAdd.layoutParams = addParam
-        myButtonAdd.text = "Add"
-        layout.addView(myButtonAdd)
-
-        val myButtonRemove = MaterialButton(requireContext())
-        myButtonRemove.layoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        val removeParam = myButtonRemove.layoutParams as RelativeLayout.LayoutParams
-        val removeEdgeDist = dpToPx(requireContext(),250).toInt()
-        val removeTopDist = dpToPx(requireContext(),222).toInt()
-        removeParam.topMargin = removeTopDist
-        removeParam.marginStart = removeEdgeDist
-        myButtonRemove.layoutParams = removeParam
-        myButtonRemove.text = "Remove"
-        addButtonClicked(spinnerList,inputTextList,myAddedCoins,coinList,layout,myButtonRemove,requestedCurrencies,myCurrency)
-        myAddedCoins++
-        myButtonAdd.setOnClickListener {
-            if(!inputText.text.isNullOrEmpty())
-                updateAmount(inputText.text.toString().toInt(), myCurrency, requestedCurrencies, inputTextList,myAddedCoins)
-
-            val added = addButtonClicked(spinnerList,inputTextList,myAddedCoins,coinList,layout,myButtonRemove,requestedCurrencies,myCurrency)
-            if(added)
+                val myButtonRemove = MaterialButton(requireContext())
+                myButtonRemove.layoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                val removeParam = myButtonRemove.layoutParams as RelativeLayout.LayoutParams
+                val removeEdgeDist = dpToPx(requireContext(),250).toInt()
+                val removeTopDist = dpToPx(requireContext(),222).toInt()
+                removeParam.topMargin = removeTopDist
+                removeParam.marginStart = removeEdgeDist
+                myButtonRemove.layoutParams = removeParam
+                myButtonRemove.text = "Remove"
+                addButtonClicked(spinnerList,inputTextList,myAddedCoins,coinList,layout,myButtonRemove,requestedCurrencies,myCurrency)
                 myAddedCoins++
-        }
+                myButtonAdd.setOnClickListener {
+                    if(!inputText.text.isNullOrEmpty())
+                        updateAmount(inputText.text.toString().toInt(), myCurrency, requestedCurrencies, inputTextList,myAddedCoins)
 
-        myButtonRemove.setOnClickListener{
-            if(myAddedCoins.equals(2F)){
-                layout.removeView(myButtonRemove)
+                    val added = addButtonClicked(spinnerList,inputTextList,myAddedCoins,coinList,layout,myButtonRemove,requestedCurrencies,myCurrency)
+                    if(added)
+                        myAddedCoins++
+                }
+
+                myButtonRemove.setOnClickListener{
+                    if(myAddedCoins.equals(2F)){
+                        requireActivity().runOnUiThread(Runnable() {
+                            layout.removeView(myButtonRemove)
+                        })
+
+                    }
+                    requireActivity().runOnUiThread(Runnable() {
+                        layout.removeView(inputTextList[myAddedCoins.toInt()-1])
+                        layout.removeView(spinnerList[myAddedCoins.toInt()-1])
+                    })
+
+                    inputTextList.removeAt(myAddedCoins.toInt()-1)
+                    spinnerList.removeAt(myAddedCoins.toInt()-1)
+                    myAddedCoins--
+                }
+                requireActivity().runOnUiThread(Runnable() {
+                    layout.addView(spinner)
+                    layout.addView(inputText)
+                    layout.addView(myButtonAdd)
+
+                })
+//                requireActivity().runOnUiThread()
+//                layout.addView(spinner)
+
             }
-            layout.removeView(inputTextList[myAddedCoins.toInt()-1])
-            inputTextList.removeAt(myAddedCoins.toInt()-1)
-            layout.removeView(spinnerList[myAddedCoins.toInt()-1])
-            spinnerList.removeAt(myAddedCoins.toInt()-1)
-            myAddedCoins--
-        }
+            override fun onFailure(call: Call, e: IOException) {
+
+            }
+        })
+
+
+
+
         //data base insertion
 
         database = FirebaseDatabase.getInstance()
         val currentFirebaseUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
         val userId = currentFirebaseUser!!.uid
-        view.limit_distance.setOnClickListener {
-            val intent = Intent(context, MapsActivity::class.java)
+        val locationButton:Button = view.limit_distance
+        if(radius!=null&&radius!= 0.0){
+//            val locationParam = view.limit_distance.layoutParams as RelativeLayout.LayoutParams
+//            locationParam.
+            locationButton.setBackgroundColor(Color.GREEN)
+            locationButton.setText("Click to change location")
 
-                intent.putExtra("Message", "Message111")
-                startActivity(intent)
+        }
+        locationButton.setOnClickListener {
+            val intent = Intent(context, MapsActivity::class.java)
+            if(radius!=null&&radius!= 0.0) {
+                intent.putExtra("Radius",radius.toString())
+                intent.putExtra("Lat",latitude.toString())
+                intent.putExtra("Long",longitude.toString())
+            }
+            startActivity(intent)
 
             //view.findNavController().navigate(R.id.action_requestFragment_to_locationFragment)
         }
@@ -191,13 +234,16 @@ class RequestFragment : Fragment() {
             else if (sameCurrency)
                 Toast.makeText(requireContext(), "Can't exchange same currency", Toast.LENGTH_SHORT).show()
             else {
-            val timeStamp = SimpleDateFormat("yyyyMMdd").format(Date())//yyyyMMdd_HHmmss if want more
+                val timeStamp = SimpleDateFormat("yyyyMMdd").format(Date())//yyyyMMdd_HHmmss if want more
                 val newTansactionRequest = TransactionRequest(
                     userId,
                     myCurrency,
                     inputText.text.toString().toInt(),
                     requestedCurrencies,
-                    timeStamp
+                    timeStamp,
+                    latitude,
+                    longitude,
+                    radius
                 )
                 val randomId = randomAlphaNumericString(32)
                 val transactionRef: DatabaseReference =
@@ -206,10 +252,11 @@ class RequestFragment : Fragment() {
                 val userTransactionRequestsRef: DatabaseReference = database.getReference("users").child(userId).child("transactionRequests").push()
                 userTransactionRequestsRef.setValue(randomId)
                 Toast.makeText(requireContext(),"Successfully submitted your request", Toast.LENGTH_SHORT).show()
-                findNavController().popBackStack()
+                findNavController().navigate(R.id.mainFragment)
             }
 
         }
+
 
         return view
     }
@@ -244,7 +291,9 @@ class RequestFragment : Fragment() {
             )
             spinner.setTitle("Select a currency")
             if (tempCoins.equals(1F)) {
-                layout.addView(removeButton)
+                requireActivity().runOnUiThread(Runnable() {
+                    layout.addView(removeButton)
+                })
             }
 
             val spinnerParam = spinner.layoutParams as RelativeLayout.LayoutParams
@@ -271,11 +320,12 @@ class RequestFragment : Fragment() {
 
                     }
                 })
-
-            spinnerList.add(spinner)
-            layout.addView(spinner)
-            inputTextList.add(amountText)
-            layout.addView(amountText)
+            requireActivity().runOnUiThread(Runnable() {
+                spinnerList.add(spinner)
+                layout.addView(spinner)
+                inputTextList.add(amountText)
+                layout.addView(amountText)
+            })
 //            for(i in 0 until addedCoins.toInt()+1){
 //                inputTextList[i].text = inputText.text
 //            }
@@ -297,11 +347,11 @@ class RequestFragment : Fragment() {
 
     fun updateAmount(requestedAmount:Int, myCurrency:String, requestedCurrencies: ArrayList<String>, inputTextList: ArrayList<MaterialTextView>,addedCoins: Float){
         var myRate: Double
-        if (apiData.rates[myCurrency] != null){
+        if (myApi.rates[myCurrency] != null){
             myRate =
-                apiData.rates[myCurrency]!!
+                myApi.rates[myCurrency]!!
             for(i in 0 until addedCoins.toInt()){
-                val requestedCurrencyAmount = (apiData.rates[requestedCurrencies[i]]!!/myRate)*requestedAmount.toDouble()
+                val requestedCurrencyAmount = (myApi.rates[requestedCurrencies[i]]!!/myRate)*requestedAmount.toDouble()
                 inputTextList[i].text = requestedCurrencyAmount.toString().format("%.3f")// TODO fix it
             }
         }

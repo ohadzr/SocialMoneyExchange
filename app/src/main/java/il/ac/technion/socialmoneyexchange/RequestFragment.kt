@@ -1,6 +1,7 @@
 package il.ac.technion.socialmoneyexchange
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.text.InputType
@@ -12,8 +13,11 @@ import android.widget.*
 import com.google.android.material.internal.ViewUtils.dpToPx
 import kotlinx.android.synthetic.main.fragment_request.view.*
 import android.text.InputFilter
+import android.view.WindowInsets
 import android.view.inputmethod.EditorInfo
 import androidx.annotation.RequiresApi
+import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
@@ -22,25 +26,31 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.gson.GsonBuilder
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import il.ac.technion.socialmoneyexchange.GlobalVariable.apiData
-import okhttp3.*
-import java.io.IOException
+import kotlinx.android.synthetic.main.activity_main.*
 import java.text.SimpleDateFormat
 
 import java.util.*
 import kotlin.collections.ArrayList
 
 
+@Suppress("DEPRECATION")
 class RequestFragment : Fragment() {
     private val MAX_CURRENECIES = 4F
     private lateinit var database: FirebaseDatabase
-
+    private var message = ""
     private val MAX_MONEY_DIGITS = 6
     lateinit var inputText : TextInputEditText
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n", "RestrictedApi")
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+//        message = savedInstanceState?.getString("Message1").toString()
+        if(arguments!=null)
+            message = arguments!!.getString("Message1").toString()
+    }
+    @SuppressLint("RestrictedApi")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -103,22 +113,19 @@ class RequestFragment : Fragment() {
         inputText.hint="Insert amount"
         inputText.inputType = InputType.TYPE_CLASS_NUMBER
         inputText.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(MAX_MONEY_DIGITS))
-        inputText.setOnEditorActionListener { v, actionId, event ->
-            if(actionId == EditorInfo.IME_ACTION_DONE){
-                if(!inputText.text.isNullOrEmpty())
-                    updateAmount(inputText.text.toString().toInt(), myCurrency, requestedCurrencies, inputTextList,myAddedCoins)
-                true
-            } else {
-                false
-            }
+        inputText.setOnClickListener{v ->
+            if(!inputText.text.isNullOrEmpty())
+                updateAmount(inputText.text.toString().toInt(), myCurrency, requestedCurrencies, inputTextList,myAddedCoins)
+
         }
+
         layout.addView(inputText)
 
         val myButtonAdd = MaterialButton(requireContext())
         myButtonAdd.layoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         val addParam = myButtonAdd.layoutParams as RelativeLayout.LayoutParams
         val addEdgeDist = dpToPx(requireContext(),12).toInt()
-        val addTopDist = dpToPx(requireContext(),332).toInt()
+        val addTopDist = dpToPx(requireContext(),222).toInt()
         addParam.topMargin = addTopDist
         addParam.marginStart = addEdgeDist
         myButtonAdd.layoutParams = addParam
@@ -129,7 +136,7 @@ class RequestFragment : Fragment() {
         myButtonRemove.layoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         val removeParam = myButtonRemove.layoutParams as RelativeLayout.LayoutParams
         val removeEdgeDist = dpToPx(requireContext(),250).toInt()
-        val removeTopDist = dpToPx(requireContext(),332).toInt()
+        val removeTopDist = dpToPx(requireContext(),222).toInt()
         removeParam.topMargin = removeTopDist
         removeParam.marginStart = removeEdgeDist
         myButtonRemove.layoutParams = removeParam
@@ -160,6 +167,14 @@ class RequestFragment : Fragment() {
         database = FirebaseDatabase.getInstance()
         val currentFirebaseUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
         val userId = currentFirebaseUser!!.uid
+        view.limit_distance.setOnClickListener {
+            val intent = Intent(context, MapsActivity::class.java)
+
+                intent.putExtra("Message", "Message111")
+                startActivity(intent)
+
+            //view.findNavController().navigate(R.id.action_requestFragment_to_locationFragment)
+        }
 
         //Hit SUBMIT
         view.submit_button_request.setOnClickListener {
@@ -169,8 +184,10 @@ class RequestFragment : Fragment() {
                     sameCurrency=true
                 //TODO don't allow to request same currencies
             }
+
             if(inputText.text.isNullOrEmpty()||inputText.text.toString()=="0")
                 Toast.makeText(requireContext(), "Please insert a requested amount", Toast.LENGTH_SHORT).show()
+
             else if (sameCurrency)
                 Toast.makeText(requireContext(), "Can't exchange same currency", Toast.LENGTH_SHORT).show()
             else {
@@ -194,6 +211,7 @@ class RequestFragment : Fragment() {
                 }
                 findNavController().popBackStack()
             }
+
         }
 
         return view
@@ -211,7 +229,7 @@ class RequestFragment : Fragment() {
             amountText.layoutParams = RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT)
             val amountTextParam = amountText.layoutParams as RelativeLayout.LayoutParams
             val amountTextEdgeDist = dpToPx(requireContext(),130).toInt()
-            val amountTextTopDist = dpToPx(requireContext(),384+24*tempCoins.toInt()).toInt()
+            val amountTextTopDist = dpToPx(requireContext(),274+24*tempCoins.toInt()).toInt()
             amountTextParam.topMargin = amountTextTopDist
             amountTextParam.marginStart = amountTextEdgeDist
             amountText.layoutParams = amountTextParam
@@ -234,7 +252,7 @@ class RequestFragment : Fragment() {
 
             val spinnerParam = spinner.layoutParams as RelativeLayout.LayoutParams
             val spinnerEdgeDist = dpToPx(requireContext(),0).toInt()
-            val spinnerTopDist = dpToPx(requireContext(),370+24*tempCoins.toInt()).toInt()
+            val spinnerTopDist = dpToPx(requireContext(),260+24*tempCoins.toInt()).toInt()
             spinnerParam.topMargin = spinnerTopDist
             spinnerParam.marginStart = spinnerEdgeDist
 //            spinnerParam.marginEnd = dpToPx(requireContext(),0).toInt()

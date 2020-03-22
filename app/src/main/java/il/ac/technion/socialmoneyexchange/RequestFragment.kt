@@ -182,13 +182,16 @@ class RequestFragment : Fragment() {
                     requestedCurrencies,
                     timeStamp
                 )
-                val randomId = randomAlphaNumericString(32)
-                val transactionRef: DatabaseReference =
-                    database.getReference("transactionRequests").child(randomId)
-                transactionRef.setValue(newTansactionRequest)
+//                val randomId = randomAlphaNumericString(32)
                 val userTransactionRequestsRef: DatabaseReference = database.getReference("users").child(userId).child("transactionRequests").push()
-                userTransactionRequestsRef.setValue(randomId)
-                Toast.makeText(requireContext(),"Successfully submitted your request", Toast.LENGTH_SHORT).show()
+                val transactionKey = userTransactionRequestsRef.key
+                if (transactionKey != null){
+                    userTransactionRequestsRef.setValue(transactionKey)
+                    val transactionRef: DatabaseReference =
+                        database.getReference("transactionRequests").child(transactionKey)
+                    transactionRef.setValue(newTansactionRequest)
+                    Toast.makeText(requireContext(),"Successfully submitted your request", Toast.LENGTH_SHORT).show()
+                }
                 findNavController().popBackStack()
             }
         }

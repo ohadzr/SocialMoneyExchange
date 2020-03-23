@@ -151,5 +151,6 @@
     <string name="reset">Reset</string>
     <string name="decline_transaction">Decline transaction</string>
     <string name="title_activity_maps">Map</string>
+    <string name="done">Done</string>
 
 </resources>

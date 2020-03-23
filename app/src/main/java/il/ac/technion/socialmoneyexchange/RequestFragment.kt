@@ -174,7 +174,9 @@ class RequestFragment : Fragment() {
 
                     inputTextList.removeAt(myAddedCoins.toInt()-1)
                     spinnerList.removeAt(myAddedCoins.toInt()-1)
+                    requestedCurrencies[myAddedCoins.toInt()-1]=""
                     myAddedCoins--
+
                 }
                 requireActivity().runOnUiThread(Runnable() {
                     layout.addView(spinner)
@@ -222,12 +224,16 @@ class RequestFragment : Fragment() {
         //Hit SUBMIT
         view.submit_button_request.setOnClickListener {
             var sameCurrency = false
-            for (i in 0..MAX_CURRENECIES.toInt()) {//checking if want to exchange same currencies
+            for (i in 0..myAddedCoins.toInt()) {//checking if want to exchange same currencies
                 if(myCurrency==requestedCurrencies[i])
                     sameCurrency=true
-                //TODO don't allow to request same currencies
             }
-
+            for (i in 0 until myAddedCoins.toInt()) {//checking if want to exchange same currencies
+                for (j in (i+1)..myAddedCoins.toInt()) {//checking if want to exchange same currencies
+                    if(requestedCurrencies[i]==requestedCurrencies[j])
+                        sameCurrency=true
+                }
+            }
             if(inputText.text.isNullOrEmpty()||inputText.text.toString()=="0")
                 Toast.makeText(requireContext(), "Please insert a requested amount", Toast.LENGTH_SHORT).show()
 

@@ -35,15 +35,21 @@ import kotlin.collections.ArrayList
 
 @Suppress("DEPRECATION")
 class RequestFragment : Fragment() {
+
     private val MAX_CURRENECIES = 4F
     private lateinit var database: FirebaseDatabase
     private var message = ""
     private val MAX_MONEY_DIGITS = 6
     lateinit var inputText : TextInputEditText
     private lateinit var myApi :CurrencyApi
+
     var latitude: Double = 0.0
     var longitude: Double = 0.0
     var radius: Double = Double.MAX_VALUE
+    var savedCurrenciesAmount: Double = 0.0
+    var myCurrency = ""
+    var myAddedCoins = 0F
+    var requestedCurrencies = ArrayList<String>()
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n", "RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,13 +68,13 @@ class RequestFragment : Fragment() {
         val request = Request.Builder().url(url).build()
         val client = OkHttpClient()
         val coinList = ArrayList<String>()
-        var myAddedCoins = 0F
-        var myCurrency = ""
+
+
         val view = inflater.inflate(R.layout.fragment_request, container, false)
         val layout = view.request_layout as RelativeLayout
         val spinnerList = ArrayList<SearchableSpinner>()
         val inputTextList = ArrayList<MaterialTextView>()
-        val requestedCurrencies = ArrayList<String>()
+
         client.newCall(request).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
 
@@ -105,7 +111,7 @@ class RequestFragment : Fragment() {
                             id: Long
                         ) {
                             myCurrency = coinList[position]
-                            if(!inputText.text.isNullOrEmpty())
+                            if(!inputText.text.isNullOrEmpty()&&savedInstanceState==null)
                                 updateAmount(inputText.text.toString().toInt(), myCurrency, requestedCurrencies, inputTextList,myAddedCoins)
 
                         }
@@ -178,14 +184,39 @@ class RequestFragment : Fragment() {
                     myAddedCoins--
 
                 }
-                requireActivity().runOnUiThread(Runnable() {
+                requireActivity().runOnUiThread {
                     layout.addView(spinner)
                     layout.addView(inputText)
                     layout.addView(myButtonAdd)
 
-                })
-//                requireActivity().runOnUiThread()
-//                layout.addView(spinner)
+                }
+                if(savedInstanceState!=null){
+                    myCurrency = savedInstanceState.getString("PickedCurrency").toString()
+                    spinner.setSelection(coinList.indexOf(myCurrency))
+                    myAddedCoins = savedInstanceState.getFloat("myAddedCoins")
+                    var tempAddedCoins = 1F
+                    requestedCurrencies = savedInstanceState.getStringArrayList("requestedCurrencies") as ArrayList<String>
+                    val pickedAmount = savedInstanceState.getString("PickedAmount")
+                    inputText.setText(pickedAmount)
+                    radius = savedInstanceState.getDouble("Radius")
+                    latitude = savedInstanceState.getDouble("Latitude")
+                    longitude = savedInstanceState.getDouble("Longitude")
+                    for(i in 0 until myAddedCoins.toInt()){
+                        if(i>0){
+                            addButtonClicked(spinnerList,inputTextList,tempAddedCoins,coinList,layout,myButtonRemove,requestedCurrencies,myCurrency)
+                            tempAddedCoins++
+                        }
+                        var updated = false
+                        while(!updated) {
+                            if(spinnerList.size>i&&inputTextList.size>i)
+                                updated=true
+                        }
+                        spinnerList[i].setSelection(coinList.indexOf(requestedCurrencies[i]))
+
+
+                    }
+                }
+
 
             }
             override fun onFailure(call: Call, e: IOException) {
@@ -239,6 +270,8 @@ class RequestFragment : Fragment() {
 
             else if (sameCurrency)
                 Toast.makeText(requireContext(), "Can't exchange same currency", Toast.LENGTH_SHORT).show()
+            else if(radius==null||radius== 0.0)
+                Toast.makeText(requireContext(), "Please choose a location", Toast.LENGTH_SHORT).show()
             else {
                 val timeStamp = SimpleDateFormat("yyyyMMdd").format(Date())//yyyyMMdd_HHmmss if want more
                 val newTansactionRequest = TransactionRequest(
@@ -265,6 +298,18 @@ class RequestFragment : Fragment() {
 
 
         return view
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("PickedCurrency",myCurrency)
+        outState.putFloat("myAddedCoins",myAddedCoins)
+        outState.putStringArrayList("requestedCurrencies",requestedCurrencies)
+        outState.putString("PickedAmount",inputText.text.toString())
+        outState.putDouble("Longitude",longitude)
+        outState.putDouble("Latitude",latitude)
+        outState.putDouble("Radius",radius)
+
     }
 
 
@@ -358,6 +403,7 @@ class RequestFragment : Fragment() {
                 myApi.rates[myCurrency]!!
             for(i in 0 until addedCoins.toInt()){
                 val requestedCurrencyAmount = (myApi.rates[requestedCurrencies[i]]!!/myRate)*requestedAmount.toDouble()
+                println("i is "+i.toString()+"list size is "+inputTextList.size.toString()+"coins added -1 are"+addedCoins.toString())
                 inputTextList[i].text = requestedCurrencyAmount.toString().format("%.3f")// TODO fix it
             }
         }

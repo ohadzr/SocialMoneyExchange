@@ -20,7 +20,7 @@
         android:id="@+id/slider_map"
         android:layout_gravity="center"
         android:value="25"
-        android:valueFrom="25"
+        android:valueFrom="10"
         android:valueTo="300"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"

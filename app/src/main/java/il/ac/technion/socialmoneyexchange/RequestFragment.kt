@@ -46,7 +46,6 @@ class RequestFragment : Fragment() {
     var latitude: Double = 0.0
     var longitude: Double = 0.0
     var radius: Double = Double.MAX_VALUE
-    var savedCurrenciesAmount: Double = 0.0
     var myCurrency = ""
     var myAddedCoins = 0F
     var requestedCurrencies = ArrayList<String>()
@@ -129,6 +128,7 @@ class RequestFragment : Fragment() {
                 inputText.hint="Insert amount"
                 inputText.inputType = InputType.TYPE_CLASS_NUMBER
                 inputText.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(MAX_MONEY_DIGITS))
+                inputText.setText("0")
                 inputText.setOnClickListener{v ->
                     if(!inputText.text.isNullOrEmpty())
                         updateAmount(inputText.text.toString().toInt(), myCurrency, requestedCurrencies, inputTextList,myAddedCoins)
@@ -236,6 +236,7 @@ class RequestFragment : Fragment() {
         if(radius!=null&&radius!= 0.0){
 //            val locationParam = view.limit_distance.layoutParams as RelativeLayout.LayoutParams
 //            locationParam.
+            println("radius is "+radius.toString())
             locationButton.setBackgroundColor(Color.GREEN)
             locationButton.setText("Click to change location")
 
@@ -300,12 +301,23 @@ class RequestFragment : Fragment() {
         return view
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        println("Tamir destroy")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        println("Tamir stop")
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString("PickedCurrency",myCurrency)
         outState.putFloat("myAddedCoins",myAddedCoins)
         outState.putStringArrayList("requestedCurrencies",requestedCurrencies)
-        outState.putString("PickedAmount",inputText.text.toString())
+        if(!inputText.text.isNullOrEmpty())
+            outState.putString("PickedAmount",inputText.text.toString())
         outState.putDouble("Longitude",longitude)
         outState.putDouble("Latitude",latitude)
         outState.putDouble("Radius",radius)
@@ -352,7 +364,6 @@ class RequestFragment : Fragment() {
             val spinnerTopDist = dpToPx(requireContext(),260+24*tempCoins.toInt()).toInt()
             spinnerParam.topMargin = spinnerTopDist
             spinnerParam.marginStart = spinnerEdgeDist
-//            spinnerParam.marginEnd = dpToPx(requireContext(),0).toInt()
             spinner.layoutParams = spinnerParam
                         spinner.onItemSelectedListener =
                 (object : AdapterView.OnItemSelectedListener {

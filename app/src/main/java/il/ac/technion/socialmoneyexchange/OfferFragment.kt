@@ -47,7 +47,8 @@ class OfferFragment : Fragment() {
         val originalRate = coinAmount1.toFloat() / coinAmount2.toFloat()
 
         val offersRef: DatabaseReference = database.getReference("offers").child(offerID)
-        val userOfferRef: DatabaseReference = database.getReference("users").child(userId).child("offers")
+        val userOfferRef: DatabaseReference =
+            database.getReference("users").child(userId).child("offers")
 //        offersRef.setValue(Offer("ohad",coinName1, coinAmount1.toFloat(), "tamir",coinName2, coinAmount2.toFloat(),"ACTIVE"))
 //        userOfferRef.setValue(offerID)
 
@@ -61,28 +62,36 @@ class OfferFragment : Fragment() {
         val declineButton = view.findViewById(R.id.decline_button) as Button
 
         // Load original data to text boxes for the first time
-        resetTextValues(coinName1, coinAmount1, coinName2, coinAmount2,
-            coinName1TextView, coinName2TextView, coinAmount1TextView, coinAmount2TextView)
+        resetTextValues(
+            coinName1, coinAmount1, coinName2, coinAmount2,
+            coinName1TextView, coinName2TextView, coinAmount1TextView, coinAmount2TextView
+        )
 
         // Set reset button to load original data
         resetButton.setOnClickListener {
-            resetTextValues(coinName1, coinAmount1, coinName2, coinAmount2,
-                coinName1TextView, coinName2TextView, coinAmount1TextView, coinAmount2TextView)
+            resetTextValues(
+                coinName1, coinAmount1, coinName2, coinAmount2,
+                coinName1TextView, coinName2TextView, coinAmount1TextView, coinAmount2TextView
+            )
         }
 
         // Set save button to accept transaction and save it to DB
         saveButton.setOnClickListener {
-            saveOrCancelOffer(database, userId,
+            saveOrCancelOffer(
+                database, userId,
                 coinName1, coinAmount1TextView,
-                coinName2,coinAmount2TextView, offerID, cancel=false)
+                coinName2, coinAmount2TextView, offerID, cancel = false
+            )
             findNavController().popBackStack()
         }
 
         // Set decline button to cancel transaction and save it to DB
         declineButton.setOnClickListener {
-            saveOrCancelOffer(database, userId,
+            saveOrCancelOffer(
+                database, userId,
                 coinName1, coinAmount1TextView,
-                coinName2, coinAmount2TextView, offerID, cancel=true)
+                coinName2, coinAmount2TextView, offerID, cancel = true
+            )
             findNavController().popBackStack()
         }
 
@@ -94,11 +103,16 @@ class OfferFragment : Fragment() {
 
             override fun afterTextChanged(s: Editable) {}
 
-            override fun beforeTextChanged(s: CharSequence, start: Int,
-                                           count: Int, after: Int) {}
+            override fun beforeTextChanged(
+                s: CharSequence, start: Int,
+                count: Int, after: Int
+            ) {
+            }
 
-            override fun onTextChanged(s: CharSequence, start: Int,
-                                       before: Int, count: Int) {
+            override fun onTextChanged(
+                s: CharSequence, start: Int,
+                before: Int, count: Int
+            ) {
                 updateExchangeRate(view, coinAmount1TextView, coinAmount2TextView, originalRate)
             }
         })
@@ -108,11 +122,16 @@ class OfferFragment : Fragment() {
 
             override fun afterTextChanged(s: Editable) {}
 
-            override fun beforeTextChanged(s: CharSequence, start: Int,
-                                           count: Int, after: Int) {}
+            override fun beforeTextChanged(
+                s: CharSequence, start: Int,
+                count: Int, after: Int
+            ) {
+            }
 
-            override fun onTextChanged(s: CharSequence, start: Int,
-                                       before: Int, count: Int) {
+            override fun onTextChanged(
+                s: CharSequence, start: Int,
+                before: Int, count: Int
+            ) {
                 updateExchangeRate(view, coinAmount1TextView, coinAmount2TextView, originalRate)
             }
         })
@@ -121,13 +140,15 @@ class OfferFragment : Fragment() {
         return view
     }
 
-    private fun saveOrCancelOffer(database: FirebaseDatabase, userId: String,
-                          coinName1: String, coinAmount1TextView: TextView,
-                          coinName2: String, coinAmount2TextView: TextView,
-                          offerID: String, cancel: Boolean) {
-        val offerRef : DatabaseReference = database.getReference("offers").child(offerID)
+    private fun saveOrCancelOffer(
+        database: FirebaseDatabase, userId: String,
+        coinName1: String, coinAmount1TextView: TextView,
+        coinName2: String, coinAmount2TextView: TextView,
+        offerID: String, cancel: Boolean
+    ) {
+        val offerRef: DatabaseReference = database.getReference("offers").child(offerID)
         // cancelling the offer
-        if (cancel){
+        if (cancel) {
             offerRef.child("status").setValue("CANCELLED")
             offerRef.child("lastUpdater").setValue(userId)
             return
@@ -138,7 +159,7 @@ class OfferFragment : Fragment() {
                 val status = dataSnapshot.child("status").getValue(String::class.java)
                 val updaterId = dataSnapshot.child("lastUpdater").getValue(String::class.java)
 
-                when (status){
+                when (status) {
                     // ACTIVE - first time reviewing offer
                     "ACTIVE" -> {
                         offerRef.child("status").setValue("PENDING")
@@ -150,8 +171,8 @@ class OfferFragment : Fragment() {
                     "PENDING" -> {
                         if (updaterId != userId)
                             offerRef.child("status").setValue("CONFIRMED")
-                            offerRef.child("coinAmount1").setValue(coinAmount1TextView.text.toString())
-                            offerRef.child("coinAmount2").setValue(coinAmount2TextView.text.toString())
+                        offerRef.child("coinAmount1").setValue(coinAmount1TextView.text.toString())
+                        offerRef.child("coinAmount2").setValue(coinAmount2TextView.text.toString())
                     }
 
                     // CONFIRMED - both users accepted the offer
@@ -187,15 +208,17 @@ class OfferFragment : Fragment() {
 
 
     // update the exchange rate box according to coin amounts
-    private fun updateExchangeRate(view : View, coinAmount1TextView: TextView,
-                                   coinAmount2TextView: TextView, originalRate: Float) {
+    private fun updateExchangeRate(
+        view: View, coinAmount1TextView: TextView,
+        coinAmount2TextView: TextView, originalRate: Float
+    ) {
         val rateTextView: TextView = view.findViewById(R.id.exchange_rate2) as TextView
-        if (coinAmount1TextView.text.toString() == "" || coinAmount2TextView.text.toString() == ""){
+        if (coinAmount1TextView.text.toString() == "" || coinAmount2TextView.text.toString() == "") {
             rateTextView.text = "N/A"
             return
         }
         val new_rate = coinAmount1TextView.text.toString().toFloat() /
-                       coinAmount2TextView.text.toString().toFloat()
+                coinAmount2TextView.text.toString().toFloat()
         var newText = "%.3f".format(new_rate)
         if (new_rate != originalRate)
             newText = "Offer rate: %.3f    Suggested rate: %.3f".format(new_rate, originalRate)

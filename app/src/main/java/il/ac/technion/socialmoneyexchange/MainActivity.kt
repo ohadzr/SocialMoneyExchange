@@ -119,6 +119,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.userProfilePublicFragment -> {
             }
+            R.id.offersFragment -> {
+            }
             R.id.aboutFragment -> {
             }
             R.id.action_login_logout -> {

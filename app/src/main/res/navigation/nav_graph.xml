@@ -54,5 +54,10 @@
         android:id="@+id/offerFragment"
         android:name="il.ac.technion.socialmoneyexchange.OfferFragment"
         android:label="OfferFragment" />
+    <fragment
+        android:id="@+id/offersFragment"
+        android:name="il.ac.technion.socialmoneyexchange.OffersFragment"
+        android:label="fragment_offers"
+        tools:layout="@layout/fragment_offers" />
     <!--        android:label="fragment_about"-->
 </navigation>

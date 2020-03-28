@@ -81,13 +81,13 @@ class MainFragment : Fragment() {
 
 
         // Get IDs of transactions and then data, finally load the data into adapter
-        getTranscationsIDFromDB(userRef, transactionRef)//, reviewRecyclerView.adapter as TransactionAdapter)
+        getTranscationsIDFromDB(userRef, transactionRef)
     }
 
 
     private fun loadTransactionsDataFromDB(ids: MutableList<String>, transactionRef: DatabaseReference){
         //dynamically load real transactions history
-        val transactionList = mutableListOf<TransactionRequest>()
+        val transactionsList = mutableListOf<TransactionRequest>()
 
         transactionRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -96,11 +96,11 @@ class MainFragment : Fragment() {
                         val transaction: TransactionRequest? = transactionSnapshot.getValue(TransactionRequest::class.java)
                         Log.d("Ohad", "Loaded transaction: $transaction")
                         if (transaction != null)
-                            transactionList.add(transaction)
+                            transactionsList.add(transaction)
                     }
                 }
                 // Update view using adapter
-                adapter.updateItems(transactionList)
+                adapter.updateItems(transactionsList)
             }
 
             override fun onCancelled(error: DatabaseError) {

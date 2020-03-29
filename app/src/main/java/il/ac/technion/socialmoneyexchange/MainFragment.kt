@@ -1,4 +1,3 @@
-
 package il.ac.technion.socialmoneyexchange
 
 import android.os.Bundle
@@ -7,7 +6,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,6 +13,15 @@ import il.ac.technion.socialmoneyexchange.databinding.FragmentMainBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
+
+
+interface TransactionsIDCallback {
+    fun onCallback(transactionsID: MutableList<String>)
+}
+
+interface TransactionDataCallback {
+    fun onCallback(transactionsData: MutableList<TransactionRequest>)
+}
 
 class MainFragment : Fragment() {
 
@@ -24,7 +31,8 @@ class MainFragment : Fragment() {
     private lateinit var binding: FragmentMainBinding
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var database: FirebaseDatabase
-
+    private lateinit var transactionList: MutableList<TransactionRequest>
+    private lateinit var adapter: TransactionAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -33,12 +41,19 @@ class MainFragment : Fragment() {
 
         database = FirebaseDatabase.getInstance()
 
+        transactionList = mutableListOf<TransactionRequest>()
+
+        // init the RecyclerView Adapter
+        linearLayoutManager = LinearLayoutManager(requireContext())
+        binding.transactionsRecyclerView.layoutManager = linearLayoutManager
+        adapter = TransactionAdapter(transactionList, requireContext())
+        binding.transactionsRecyclerView.adapter = adapter
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        observeAuthenticationState()
 
         //TODO: add here - show logo for 3 seconds
 
@@ -55,94 +70,76 @@ class MainFragment : Fragment() {
         // if user is connected but not in database
         val userId = currentFirebaseUser.uid
         val userRef: DatabaseReference = database.getReference("users").child(userId)
+        val transactionRef: DatabaseReference = database.getReference("transactionRequests")
 
-        userRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                // This method is triggered once when the listener is attached and again
-                // every time the data, including children, changes.
-                // value can be String, Long, Double, Boolean, Map<String, Object>, List<Object>
-                val firstName = dataSnapshot.child("firstName").getValue(String::class.java)
-                if (firstName == null) {
-                    val action = MainFragmentDirections.actionMainFragmentToNewUserFragment()
-                    findNavController().navigate(action)
-                    return
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                // Failed to read value
-                Log.w("ohad", "Failed to read value.", error.toException())
-            }
-        })
-
-
-        binding.requestButton.setOnClickListener{
+        // Bind new request button
+        binding.requestButton.setOnClickListener {
             val action = MainFragmentDirections.actionMainFragmentToRequestFragment()
             findNavController().navigate(action)
         }
 
-        val reviewRecyclerView = binding.reviewRecyclerView
-        linearLayoutManager = LinearLayoutManager(requireContext())
-        reviewRecyclerView.layoutManager = linearLayoutManager
 
-        //Load review into ArrayList
-        // TODO: dynamically load real transactions history
-        val reviewList = ArrayList<String>()
-        reviewList.add("transactions1")
-        reviewList.add("transactions2")
-        reviewList.add("transactions3")
-        reviewList.add("transactions4")
-        reviewList.add("transactions5")
-        reviewList.add("transactions6")
-
-        // Access the RecyclerView Adapter and load the data into it
-        reviewRecyclerView.adapter = ReviewsAdapter(reviewList, requireContext())
+        // Get IDs of transactions and then data, finally load the data into adapter
+        getTranscationsIDFromDB(userRef, transactionRef)
     }
 
 
-//    /**
-//     * Observes the authentication state and changes the UI accordingly.
-//     * If there is a logged in user: (1) show a logout item in menu and (2) display their name.
-//     * If there is no logged in user: show a login item in menu
-//     */
-//    private fun observeAuthenticationState() {
-//        val factToDisplay = viewModel.getFactToDisplay(requireContext())
-//
-//        viewModel.authenticationState.observe(viewLifecycleOwner, Observer { authenticationState ->
-//            // in LoginViewModel and change the UI accordingly.
-//            when (authenticationState) {
-//                // you can customize the welcome message they see by
-//                // utilizing the getFactWithPersonalization() function provided
-//                LoginViewModel.AuthenticationState.AUTHENTICATED -> {
-//                    binding.welcomeText.text = getFactWithPersonalization(factToDisplay)
-//                    binding.authButton.text = getString(R.string.logout_button_text)
-//                    binding.authButton.setOnClickListener {
-//                        AuthUI.getInstance().signOut(requireContext())
-//                    }
-//                }
-//                else -> {
-//                    // auth_button should display Login and
-//                    // launch the sign in screen when clicked.
-//                    binding.welcomeText.text = factToDisplay
-//
-//                    binding.authButton.text = getString(R.string.login_button_text)
-//                    binding.authButton.setOnClickListener {
-//                        launchSignInFlow()
-//                    }
-//                }
-//            }
-//        })
-//    }
+    private fun loadTransactionsDataFromDB(ids: MutableList<String>, transactionRef: DatabaseReference){
+        //dynamically load real transactions history
+        val transactionsList = mutableListOf<TransactionRequest>()
 
-//    private fun getFactWithPersonalization(fact: String): String {
-//        return String.format(
-//            resources.getString(
-//                R.string.welcome_message_authed,
-//                FirebaseAuth.getInstance().currentUser?.displayName,
-//                Character.toLowerCase(fact[0]) + fact.substring(1)
-//            )
-//        )
-//    }
+        transactionRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                for (transactionSnapshot in dataSnapshot.children) {
+                    if (ids.contains(transactionSnapshot.key)) {
+                        val transaction: TransactionRequest? = transactionSnapshot.getValue(TransactionRequest::class.java)
+                        Log.d("Ohad", "Loaded transaction: $transaction")
+                        if (transaction != null)
+                            transactionsList.add(transaction)
+                    }
+                }
+                // Update view using adapter
+                adapter.updateItems(transactionsList)
+            }
 
+            override fun onCancelled(error: DatabaseError) {
+                // Failed to read value
+                Log.w("Ohad", "Failed to read value.", error.toException())
+            }
+        })
+    }
+
+
+    private fun getTranscationsIDFromDB(userRef: DatabaseReference, transactionRef: DatabaseReference){
+        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            // This method is triggered once when the listener is attached
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // first, check if user first name exists
+                val firstName = dataSnapshot.child("firstName").getValue(String::class.java)
+                if (firstName == null) {
+                    val action = MainFragmentDirections.actionMainFragmentToNewUserFragment()
+                    findNavController().navigate(action)
+                    //                    return FIXME: maybe the return here is needed?
+                }
+
+                // Load transactions requests IDs from DB
+                val ids = mutableListOf<String>()
+                val transactions = dataSnapshot.child("transactionRequests").children
+                transactions.forEach {
+                    ids += it.getValue(String::class.java).toString()
+                }
+
+                Log.d("Ohad", "Found IDs: $ids")
+                loadTransactionsDataFromDB(ids, transactionRef)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Failed to read value
+                Log.w("Ohad", "Failed to read value.", error.toException())
+            }
+        })
+    }
 
 }
+
+

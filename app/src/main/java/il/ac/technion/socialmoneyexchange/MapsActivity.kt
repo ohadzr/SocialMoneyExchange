@@ -149,10 +149,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         }
 
-
-
-
-
     }
     private fun requestNewLocationData() {
         var mLocationRequest = LocationRequest()

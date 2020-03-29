@@ -152,5 +152,7 @@
     <string name="decline_transaction">Decline transaction</string>
     <string name="title_activity_maps">Map</string>
     <string name="done">Done</string>
+    <string name="offers">Offers</string>
+    <string name="transaction_request_image">transaction request image</string>
 
 </resources>

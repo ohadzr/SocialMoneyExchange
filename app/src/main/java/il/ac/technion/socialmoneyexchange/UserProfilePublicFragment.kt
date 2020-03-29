@@ -41,8 +41,9 @@ class UserProfilePublicFragment : Fragment() {
         val userRef : DatabaseReference = database.getReference("users").child(userId)
 
         // Read from the database
-        userRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
+        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun
+                    onDataChange(dataSnapshot: DataSnapshot) {
                 // This method is triggered once when the listener is attached and again
                 // every time the data, including children, changes.
                 // value can be String, Long, Double, Boolean, Map<String, Object>, List<Object>
@@ -61,18 +62,20 @@ class UserProfilePublicFragment : Fragment() {
             }
         })
 
-        //Load review into ArrayList
-        // TODO: dynamically load real reviews
-        val reviewList = ArrayList<String>()
-        reviewList.add("review1")
-        reviewList.add("review2")
-        reviewList.add("review3")
-        reviewList.add("review4")
-        reviewList.add("review5")
-        reviewList.add("review6")
-
-        // Access the RecyclerView Adapter and load the data into it
-        reviewRecyclerView.adapter = ReviewsAdapter(reviewList, requireContext())
+//        //Load review into ArrayList
+//        // TODO: dynamically load real reviews
+//        val reviewList = ArrayList<ArrayList<String>>()
+//        val item = ArrayList<String>()
+//        item.add("USD")
+//        item.add("100")
+//        item.add("EUR")
+//        item.add("200")
+//
+//        for (i in 0..100)
+//            reviewList.add(item)
+//
+//        // Access the RecyclerView Adapter and load the data into it
+//        reviewRecyclerView.adapter = ReviewsAdapter(reviewList, requireContext())
 
         return view
     }

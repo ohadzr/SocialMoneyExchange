@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_fragment"
-    tools:context=".MainFragment"
-    >
+    android:id="@+id/fragment_offers"
+    tools:context=".OffersFragment">
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -16,7 +15,7 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/logo_image_main"
+                android:id="@+id/logo_image_offers"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -31,44 +30,28 @@
                 app:srcCompat="@drawable/swap_trans"
                 tools:src="@drawable/swap_trans" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/request_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:layout_margin="16dp"
-                android:paddingLeft="32dp"
-                android:paddingTop="16dp"
-                android:paddingRight="32dp"
-                android:paddingBottom="16dp"
-                android:text="@string/new_request"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/logo_image_main" />
-
 
             <TextView
-                android:id="@+id/history_text"
+                android:id="@+id/offers_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:padding="6dp"
-                android:text="@string/transaction_history"
+                android:text="@string/offers"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/request_button"/>
+                app:layout_constraintTop_toBottomOf="@+id/logo_image_offers" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/transactionsRecyclerView"
+                android:id="@+id/offersRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layoutAnimation="@anim/layout_animation_fall_down"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/history_text"/>
+                app:layout_constraintTop_toBottomOf="@+id/offers_text" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 </layout>

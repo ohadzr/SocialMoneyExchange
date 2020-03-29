@@ -119,7 +119,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.userProfilePublicFragment -> {
             }
-            R.id.offersFragment -> {
+            R.id.offerFragment -> {
             }
             R.id.aboutFragment -> {
             }

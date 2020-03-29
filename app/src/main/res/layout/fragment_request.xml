@@ -3,20 +3,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/RequestFragment"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:fillViewport="true"
     tools:context=".RequestFragment">
 
-
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <RelativeLayout
         android:id="@+id/request_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
         android:clipChildren="false"
         android:clipToPadding="false"
         android:padding="2dp"
         android:paddingTop="2dp">
+
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -32,14 +34,25 @@
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/receiving_info"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_marginStart="12dp"
             android:layout_marginTop="150dp"
             android:text="Please choose what currencies you want to receive"
             android:textSize="20sp">
 
         </com.google.android.material.textview.MaterialTextView>
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/limit_distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/receiving_info"
+            android:layout_marginTop="220dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="0dp"
+            android:text="No distance limitations" />
         <com.google.android.material.button.MaterialButton
             android:id="@+id/submit_button_request"
             android:layout_width="wrap_content"
@@ -47,18 +60,10 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="0dp"
+            android:layout_below="@+id/limit_distance"
+            android:layout_marginTop="0dp"
             android:text="Submit" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/limit_distance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/submit_button_request"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="624dp"
-            android:layout_marginBottom="10dp"
-            android:text="No distance limitations" />
-
-
     </RelativeLayout>
+    </ScrollView>
 </LinearLayout>

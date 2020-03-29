@@ -46,9 +46,9 @@ class MainFragment : Fragment() {
 
         // init the RecyclerView Adapter
         linearLayoutManager = LinearLayoutManager(requireContext())
-        binding.reviewRecyclerView.layoutManager = linearLayoutManager
+        binding.transactionsRecyclerView.layoutManager = linearLayoutManager
         adapter = TransactionAdapter(transactionList, requireContext())
-        binding.reviewRecyclerView.adapter = adapter
+        binding.transactionsRecyclerView.adapter = adapter
 
         return binding.root
     }

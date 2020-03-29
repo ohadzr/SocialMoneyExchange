@@ -13,7 +13,6 @@ import il.ac.technion.socialmoneyexchange.databinding.FragmentMainBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
-import android.content.Context
 
 
 interface TransactionsIDCallback {

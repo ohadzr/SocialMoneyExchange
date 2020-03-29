@@ -240,10 +240,10 @@ class RequestFragment : Fragment() {
         //data base insertion
 
         database = FirebaseDatabase.getInstance()
+
         val currentFirebaseUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
         val userId = currentFirebaseUser!!.uid
         val locationButton:Button = view.limit_distance
-        println("radius is "+radius.toString())
         if(radius!=null&&radius!= 0.0){
 
 //            val locationParam = view.limit_distance.layoutParams as RelativeLayout.LayoutParams

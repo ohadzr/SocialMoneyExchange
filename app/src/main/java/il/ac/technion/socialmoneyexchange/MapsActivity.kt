@@ -15,28 +15,17 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.Circle
 import com.google.android.gms.maps.model.CircleOptions
-import androidx.core.app.ComponentActivity.ExtraData
-import androidx.core.content.ContextCompat.getSystemService
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+
 import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
 import android.os.Build
 import android.os.Looper
 import android.provider.Settings
-import android.text.InputFilter
-import android.text.InputType
-import android.view.ViewGroup
 import android.widget.Button
-import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
-import com.google.android.material.internal.ViewUtils
 import com.google.android.material.slider.Slider
-import com.google.android.material.textfield.TextInputEditText
 
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
@@ -121,6 +110,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 //            clickable(true)
 
         }
+        val myCurrency = intent.getStringExtra("PickedCurrency")
+        val savedAddedCoins = intent.getStringExtra("savedAddedCoins")
+
+        val savedPickedAmount = intent.getStringExtra("pickedAmount")
+        val savedRequestedCurrencies = intent.getStringArrayListExtra("savedRequestedCurrencies")
 
         val circle = mMap.addCircle(circleOptions)
 //        mMap.setOnCircleClickListener {circle -> circleOptions.radius = circle.radius }
@@ -144,6 +138,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             intent.putExtra("Radius",circle.radius.toString())
             intent.putExtra("Lat",marker.position.latitude.toString())
             intent.putExtra("Long",marker.position.longitude.toString())
+            intent.putExtra("PickedCurrency",myCurrency)
+            intent.putExtra("savedAddedCoins",savedAddedCoins)
+            intent.putExtra("pickedAmount",savedPickedAmount)
+            intent.putExtra("savedRequestedCurrencies",savedRequestedCurrencies)
 //            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
             startActivity(intent)
             finish()

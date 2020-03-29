@@ -42,22 +42,39 @@ class RequestFragment : Fragment() {
     private val MAX_MONEY_DIGITS = 6
     lateinit var inputText : TextInputEditText
     private lateinit var myApi :CurrencyApi
-
     var latitude: Double = 0.0
     var longitude: Double = 0.0
-    var radius: Double = Double.MAX_VALUE
+    var radius: Double = 0.0
+
     var myCurrency = ""
     var myAddedCoins = 0F
+    var savedAddedCoins = 0F
     var requestedCurrencies = ArrayList<String>()
+    var savedRequestedCurrencies = ArrayList<String>()
+    var pickedAmount = "0"
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n", "RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if(arguments!=null) {
+        if(savedInstanceState!=null) {
+            myCurrency = savedInstanceState.getString("PickedCurrency").toString()
+            savedAddedCoins = savedInstanceState.getFloat("myAddedCoins")
+            pickedAmount = savedInstanceState.getString("pickedAmount").toString()
+            radius = savedInstanceState.getDouble("Radius")
+            latitude = savedInstanceState.getDouble("Latitude")
+            longitude = savedInstanceState.getDouble("Longitude")
+            savedRequestedCurrencies = savedInstanceState.getStringArrayList("requestedCurrencies") as ArrayList<String>
+        }
+        else if(arguments!=null&& arguments!!.getString("fromMap")=="true") {
             radius = arguments!!.getDouble("Radius")
             latitude = arguments!!.getDouble("Lat")
             longitude = arguments!!.getDouble("Long")
+            myCurrency = arguments!!.getString("PickedCurrency").toString()
+            savedAddedCoins = arguments!!.getFloat("savedAddedCoins")
+            pickedAmount = arguments!!.getString("pickedAmount").toString()
+            savedRequestedCurrencies = arguments!!.getStringArrayList("savedRequestedCurrencies") as ArrayList<String>
         }
+
     }
     @SuppressLint("RestrictedApi")
     override fun onCreateView(
@@ -110,10 +127,8 @@ class RequestFragment : Fragment() {
                             id: Long
                         ) {
                             myCurrency = coinList[position]
-                            if(!inputText.text.isNullOrEmpty()&&savedInstanceState==null)
-                                updateAmount(inputText.text.toString().toInt(), myCurrency, requestedCurrencies, inputTextList,myAddedCoins)
-
-                        }
+                            updateAmount(pickedAmount.toInt(), myCurrency, requestedCurrencies, inputTextList,myAddedCoins)
+                                                    }
                     })
 
                 //input text for giving
@@ -128,11 +143,10 @@ class RequestFragment : Fragment() {
                 inputText.hint="Insert amount"
                 inputText.inputType = InputType.TYPE_CLASS_NUMBER
                 inputText.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(MAX_MONEY_DIGITS))
-                inputText.setText("0")
+                inputText.setText(pickedAmount)
                 inputText.setOnClickListener{v ->
-                    if(!inputText.text.isNullOrEmpty())
-                        updateAmount(inputText.text.toString().toInt(), myCurrency, requestedCurrencies, inputTextList,myAddedCoins)
-
+                        pickedAmount = inputText.text.toString()
+                        updateAmount(pickedAmount.toInt(), myCurrency, requestedCurrencies, inputTextList,myAddedCoins)
                 }
 
                 val myButtonAdd = MaterialButton(requireContext())
@@ -158,9 +172,7 @@ class RequestFragment : Fragment() {
                 addButtonClicked(spinnerList,inputTextList,myAddedCoins,coinList,layout,myButtonRemove,requestedCurrencies,myCurrency)
                 myAddedCoins++
                 myButtonAdd.setOnClickListener {
-                    if(!inputText.text.isNullOrEmpty())
-                        updateAmount(inputText.text.toString().toInt(), myCurrency, requestedCurrencies, inputTextList,myAddedCoins)
-
+                    updateAmount(pickedAmount.toInt(), myCurrency, requestedCurrencies, inputTextList,myAddedCoins)
                     val added = addButtonClicked(spinnerList,inputTextList,myAddedCoins,coinList,layout,myButtonRemove,requestedCurrencies,myCurrency)
                     if(added)
                         myAddedCoins++
@@ -190,17 +202,15 @@ class RequestFragment : Fragment() {
                     layout.addView(myButtonAdd)
 
                 }
-                if(savedInstanceState!=null){
-                    myCurrency = savedInstanceState.getString("PickedCurrency").toString()
+
+                if(savedInstanceState!=null|| (arguments!=null&& arguments!!.getString("fromMap")=="true")){
                     spinner.setSelection(coinList.indexOf(myCurrency))
-                    myAddedCoins = savedInstanceState.getFloat("myAddedCoins")
                     var tempAddedCoins = 1F
-                    requestedCurrencies = savedInstanceState.getStringArrayList("requestedCurrencies") as ArrayList<String>
-                    val pickedAmount = savedInstanceState.getString("PickedAmount")
-                    inputText.setText(pickedAmount)
-                    radius = savedInstanceState.getDouble("Radius")
-                    latitude = savedInstanceState.getDouble("Latitude")
-                    longitude = savedInstanceState.getDouble("Longitude")
+                    myAddedCoins = savedAddedCoins
+                    requestedCurrencies = savedRequestedCurrencies
+
+//                    inputText.setText(pickedAmount)
+
                     for(i in 0 until myAddedCoins.toInt()){
                         if(i>0){
                             addButtonClicked(spinnerList,inputTextList,tempAddedCoins,coinList,layout,myButtonRemove,requestedCurrencies,myCurrency)
@@ -233,10 +243,12 @@ class RequestFragment : Fragment() {
         val currentFirebaseUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
         val userId = currentFirebaseUser!!.uid
         val locationButton:Button = view.limit_distance
+        println("radius is "+radius.toString())
         if(radius!=null&&radius!= 0.0){
+
 //            val locationParam = view.limit_distance.layoutParams as RelativeLayout.LayoutParams
 //            locationParam.
-            println("radius is "+radius.toString())
+
             locationButton.setBackgroundColor(Color.GREEN)
             locationButton.setText("Click to change location")
 
@@ -247,7 +259,13 @@ class RequestFragment : Fragment() {
                 intent.putExtra("Radius",radius.toString())
                 intent.putExtra("Lat",latitude.toString())
                 intent.putExtra("Long",longitude.toString())
+
             }
+            intent.putExtra("PickedCurrency",myCurrency)
+            intent.putExtra("savedAddedCoins",myAddedCoins.toString())
+            intent.putExtra("pickedAmount",pickedAmount)
+
+            intent.putExtra("savedRequestedCurrencies",requestedCurrencies)
             startActivity(intent)
 
             //view.findNavController().navigate(R.id.action_requestFragment_to_locationFragment)
@@ -301,23 +319,13 @@ class RequestFragment : Fragment() {
         return view
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        println("Tamir destroy")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        println("Tamir stop")
-    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString("PickedCurrency",myCurrency)
         outState.putFloat("myAddedCoins",myAddedCoins)
         outState.putStringArrayList("requestedCurrencies",requestedCurrencies)
-        if(!inputText.text.isNullOrEmpty())
-            outState.putString("PickedAmount",inputText.text.toString())
+        outState.putString("pickedAmount",pickedAmount)
         outState.putDouble("Longitude",longitude)
         outState.putDouble("Latitude",latitude)
         outState.putDouble("Radius",radius)
@@ -376,10 +384,7 @@ class RequestFragment : Fragment() {
                     ) {
                         val tempString = coinList[position]
                         requestedCurrencies[tempCoins.toInt()]=tempString
-                        if(!inputText.text.isNullOrEmpty())
-                            updateAmount(inputText.text.toString().toInt(), myCurrency, requestedCurrencies, inputTextList,addedCoins+1)
-
-
+                        updateAmount(pickedAmount.toInt(), myCurrency, requestedCurrencies, inputTextList,myAddedCoins)
                     }
                 })
             requireActivity().runOnUiThread(Runnable() {
@@ -413,8 +418,9 @@ class RequestFragment : Fragment() {
             myRate =
                 myApi.rates[myCurrency]!!
             for(i in 0 until addedCoins.toInt()){
+                println("i is "+i.toString()+"list size is "+inputTextList.size.toString()+"coins added -1 are "+addedCoins.toString()+"requested currency is "+requestedCurrencies[i])
                 val requestedCurrencyAmount = (myApi.rates[requestedCurrencies[i]]!!/myRate)*requestedAmount.toDouble()
-                println("i is "+i.toString()+"list size is "+inputTextList.size.toString()+"coins added -1 are"+addedCoins.toString())
+
                 inputTextList[i].text = requestedCurrencyAmount.toString().format("%.3f")// TODO fix it
             }
         }

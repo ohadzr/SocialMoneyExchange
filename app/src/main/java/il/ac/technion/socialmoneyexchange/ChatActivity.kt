@@ -46,7 +46,7 @@ class ChatActivity : AppCompatActivity() {
         val currentFirebaseUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
         val userId = currentFirebaseUser!!.uid
 
-        database.getReference("offers").child("-M3CkRGKtfgf5nSr-rg7").
+        database.getReference("offers").child(offerId).
             child("messages")?.
             child(java.lang.String.valueOf(System.currentTimeMillis()))?.
             setValue(Message(mainActivityEditText.text.toString(),userId))
@@ -85,7 +85,7 @@ class ChatActivity : AppCompatActivity() {
                 //log error
             }
         }
-        database.getReference("offers").child("-M3CkRGKtfgf5nSr-rg7").child("messages")
+        database.getReference("offers").child(offerId).child("messages")
             .addValueEventListener(postListener)
     }
     private fun setupAdapter(data: ArrayList<Message>){

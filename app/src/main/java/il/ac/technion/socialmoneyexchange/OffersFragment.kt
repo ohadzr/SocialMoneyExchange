@@ -41,7 +41,7 @@ class OffersFragment : Fragment() {
         val context = requireContext()
         linearLayoutManager = LinearLayoutManager(context)
         binding.offersRecyclerView.layoutManager = linearLayoutManager
-        adapter = OfferAdapter(offersList, context)
+        adapter = OfferAdapter(context)
         binding.offersRecyclerView.adapter = adapter
         binding.offersRecyclerView.addItemDecoration(
             DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
@@ -71,19 +71,24 @@ class OffersFragment : Fragment() {
     private fun loadOffersDataFromDB(ids: MutableList<String>, offersRef: DatabaseReference){
         //dynamically load real transactions history
         val offerList = mutableListOf<Offer>()
-
+        val offerIDs = mutableListOf<String>()
         offersRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 for (offerSnapshot in dataSnapshot.children) {
                     if (ids.contains(offerSnapshot.key)) {
                         val offer: Offer? = offerSnapshot.getValue(Offer::class.java)
+                        val offerKey = offerSnapshot.key
                         Log.d("Ohad", "Loaded transaction: $offer")
-                        if (offer != null)
+
+                        if (offer != null && offerKey != null) {
                             offerList.add(offer)
+                            offerIDs.add(offerKey)
+                        }
                     }
                 }
                 // Update view using adapter
-                adapter.updateItems(offerList)
+                adapter.offerIds = offerIDs
+                adapter.offersList = offerList
             }
 
             override fun onCancelled(error: DatabaseError) {

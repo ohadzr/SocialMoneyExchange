@@ -155,5 +155,6 @@
     <string name="offers">Offers</string>
     <string name="transaction_request_image">transaction request image</string>
     <string name="delete_minus">-</string>
+    <string name="delete_button">Delete button</string>
 
 </resources>

@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -42,12 +43,12 @@ class MainFragment : Fragment() {
 
         database = FirebaseDatabase.getInstance()
 
-        transactionList = mutableListOf<TransactionRequest>()
+//        transactionList = mutableListOf<TransactionRequest>()
 
         // init the RecyclerView Adapter
         linearLayoutManager = LinearLayoutManager(requireContext())
         binding.transactionsRecyclerView.layoutManager = linearLayoutManager
-        adapter = TransactionAdapter(transactionList, requireContext())
+        adapter = TransactionAdapter(requireContext())
         binding.transactionsRecyclerView.adapter = adapter
         binding.transactionsRecyclerView.addItemDecoration(
             DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
@@ -91,19 +92,24 @@ class MainFragment : Fragment() {
     private fun loadTransactionsDataFromDB(ids: MutableList<String>, transactionRef: DatabaseReference){
         //dynamically load real transactions history
         val transactionsList = mutableListOf<TransactionRequest>()
+        val transactionsIDs = mutableListOf<String>()
 
         transactionRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 for (transactionSnapshot in dataSnapshot.children) {
                     if (ids.contains(transactionSnapshot.key)) {
                         val transaction: TransactionRequest? = transactionSnapshot.getValue(TransactionRequest::class.java)
+                        val transactionsKey = transactionSnapshot.key
                         Log.d("Ohad", "Loaded transaction: $transaction")
-                        if (transaction != null)
+                        if (transaction != null && transactionsKey != null) {
                             transactionsList.add(transaction)
+                            transactionsIDs.add(transactionsKey)
+                        }
                     }
                 }
                 // Update view using adapter
-                adapter.updateItems(transactionsList)
+                adapter.transactionList = transactionsList
+                adapter.transactionIDs = transactionsIDs
             }
 
             override fun onCancelled(error: DatabaseError) {

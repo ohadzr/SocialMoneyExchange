@@ -105,7 +105,6 @@ class OfferAdapter(val offersList: MutableList<Offer>,
 }
 
 
-
 class OfferViewHolder (view: View) : RecyclerView.ViewHolder(view) {
     // Holds the TextView that will add each review to
     val user_name_text = view.user_name_text

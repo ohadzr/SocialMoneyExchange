@@ -112,7 +112,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
         val myCurrency = intent.getStringExtra("PickedCurrency")
         val savedAddedCoins = intent.getStringExtra("savedAddedCoins")
-
+        val savedRequestId = intent.getStringExtra("savedRequestId")
         val savedPickedAmount = intent.getStringExtra("pickedAmount")
         val savedRequestedCurrencies = intent.getStringArrayListExtra("savedRequestedCurrencies")
 
@@ -142,6 +142,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             intent.putExtra("savedAddedCoins",savedAddedCoins)
             intent.putExtra("pickedAmount",savedPickedAmount)
             intent.putExtra("savedRequestedCurrencies",savedRequestedCurrencies)
+            intent.putExtra("savedRequestId",savedRequestId)
 //            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
             startActivity(intent)
             finish()

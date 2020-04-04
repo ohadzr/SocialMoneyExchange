@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         if(!intent.getStringExtra("fromMap").isNullOrEmpty()) {
             val bundle = Bundle()
-            bundle.putString("fromMap","true")
+            bundle.putString("fromMapOrEdit","true")
             bundle.putDouble("Radius",intent.getStringExtra("Radius").toDouble())
             bundle.putDouble("Lat",intent.getStringExtra("Lat").toDouble())
             bundle.putDouble("Long",intent.getStringExtra("Long").toDouble())
@@ -67,6 +67,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             bundle.putFloat("savedAddedCoins",intent.getStringExtra("savedAddedCoins").toFloat())
             bundle.putString("pickedAmount",intent.getStringExtra("pickedAmount"))
             bundle.putStringArrayList("savedRequestedCurrencies",intent.getStringArrayListExtra("savedRequestedCurrencies"))
+            bundle.putString("savedRequestId",intent.getStringExtra("savedRequestId"))
             navController?.navigate(R.id.requestFragment, bundle)
 
         }

@@ -25,6 +25,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.gson.GsonBuilder
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
+import kotlinx.android.synthetic.main.fragment_request.*
 import okhttp3.*
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -48,6 +49,7 @@ class RequestFragment : Fragment() {
     var requestedCurrencies = ArrayList<String>()
     var savedRequestedCurrencies = ArrayList<String>()
     var pickedAmount = "0"
+    var savedRequestId: String = ""
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n", "RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,8 +62,9 @@ class RequestFragment : Fragment() {
             latitude = savedInstanceState.getDouble("Latitude")
             longitude = savedInstanceState.getDouble("Longitude")
             savedRequestedCurrencies = savedInstanceState.getStringArrayList("requestedCurrencies") as ArrayList<String>
+            savedRequestId = savedInstanceState.getString("savedRequestId").toString()
         }
-        else if(arguments!=null&& arguments!!.getString("fromMap")=="true") {
+        else if(arguments!=null&& arguments!!.getString("fromMapOrEdit")=="true") {
             radius = arguments!!.getDouble("Radius")
             latitude = arguments!!.getDouble("Lat")
             longitude = arguments!!.getDouble("Long")
@@ -69,6 +72,7 @@ class RequestFragment : Fragment() {
             savedAddedCoins = arguments!!.getFloat("savedAddedCoins")
             pickedAmount = arguments!!.getString("pickedAmount").toString()
             savedRequestedCurrencies = arguments!!.getStringArrayList("savedRequestedCurrencies") as ArrayList<String>
+            savedRequestId = arguments!!.getString("savedRequestId").toString()
         }
 
     }
@@ -80,8 +84,6 @@ class RequestFragment : Fragment() {
         val request = Request.Builder().url(url).build()
         val client = OkHttpClient()
         val coinList = ArrayList<String>()
-
-
         val view = inflater.inflate(R.layout.fragment_request, container, false)
         val layout = view.request_layout as RelativeLayout
         val spinnerList = ArrayList<SearchableSpinner>()
@@ -205,24 +207,11 @@ class RequestFragment : Fragment() {
 
                 }
 
-                if(savedInstanceState!=null|| (arguments!=null&& arguments!!.getString("fromMap")=="true")){
+                if(savedInstanceState!=null|| (arguments!=null&& arguments!!.getString("fromMapOrEdit")=="true")){
                     spinner.setSelection(coinList.indexOf(myCurrency))
-//                    var tempAddedCoins = 1F
-//                    var waitForSetup = true
-//                    while(waitForSetup){
-//                        if(myAddedCoins==1F)
-//                            waitForSetup=false
-//                    }
-//                    myAddedCoins = savedAddedCoins
-                    requestedCurrencies = savedRequestedCurrencies
-                    println("Size of list before entering "+requestedCurrencies.size.toString())
-                    for(i in 0 until requestedCurrencies.size)
-                        println(requestedCurrencies[i])
-//                    inputText.setText(pickedAmount)
 
                     for(i in 0 until savedAddedCoins.toInt()){
                         if(i>0){
-                            println("myAddedCoins is $myAddedCoins")
                             addButtonClicked(spinnerList,inputTextList,myAddedCoins,coinList,layout,myButtonRemove,requestedCurrencies,myCurrency)
                             myAddedCoins++
                         }
@@ -252,6 +241,9 @@ class RequestFragment : Fragment() {
         val currentFirebaseUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
         val userId = currentFirebaseUser!!.uid
         val locationButton:Button = view.limit_distance
+        if(savedRequestId!=""){
+            submit_button_request.text = "Update"
+        }
         if(radius!= 0.0){
 
             locationButton.setBackgroundColor(Color.GREEN)
@@ -269,7 +261,7 @@ class RequestFragment : Fragment() {
             intent.putExtra("PickedCurrency",myCurrency)
             intent.putExtra("savedAddedCoins",myAddedCoins.toString())
             intent.putExtra("pickedAmount",pickedAmount)
-
+            intent.putExtra("savedRequestId",savedRequestId)
             intent.putExtra("savedRequestedCurrencies",requestedCurrencies)
             startActivity(intent)
         }
@@ -306,7 +298,10 @@ class RequestFragment : Fragment() {
                     longitude,
                     radius
                 )
-                val randomId = randomAlphaNumericString()
+                val randomId : String = if(savedRequestId=="")
+                    randomAlphaNumericString()
+                else
+                    savedRequestId
                 val transactionRef: DatabaseReference =
                     database.getReference("transactionRequests").child(randomId)
                 transactionRef.setValue(newTransactionRequest)
@@ -332,7 +327,7 @@ class RequestFragment : Fragment() {
         outState.putDouble("Longitude",longitude)
         outState.putDouble("Latitude",latitude)
         outState.putDouble("Radius",radius)
-
+        outState.putString("savedRequestId",savedRequestId)
     }
 
 
@@ -368,10 +363,7 @@ class RequestFragment : Fragment() {
                     layout.addView(removeButton)
                 }
             }
-            requireActivity().runOnUiThread {
-                inputTextList.add(amountText)
-                layout.addView(amountText)
-            }
+
             val spinnerParam = spinner.layoutParams as RelativeLayout.LayoutParams
             val spinnerEdgeDist = dpToPx(requireContext(),0).toInt()
             val spinnerTopDist = dpToPx(requireContext(),260+30*addedCoins.toInt()).toInt()
@@ -395,6 +387,8 @@ class RequestFragment : Fragment() {
             requireActivity().runOnUiThread {
                 spinnerList.add(spinner)
                 layout.addView(spinner)
+                inputTextList.add(amountText)
+                layout.addView(amountText)
             }
 
             return true
@@ -418,15 +412,10 @@ class RequestFragment : Fragment() {
         if (myApi.rates[myCurrency] != null){
             myRate =
                 myApi.rates[myCurrency]!!
-//            for(i in 0 until addedCoins.toInt()){
             for(i in 0 until inputTextList.size){
                 println("i is "+i.toString()+" list size is "+inputTextList.size.toString()+"coins added -1 are "+addedCoins.toString()+"requested currency is "+requestedCurrencies[i])
                 val requestedCurrencyAmount = (myApi.rates[requestedCurrencies[i]]!!/myRate)*requestedAmount.toDouble()
-//                var notUpdated = true
-//                while(notUpdated){
-//                    if(inputTextList.size.toFloat()==myAddedCoins)
-//                        notUpdated = false
-//                }
+
                 inputTextList[i].text = requestedCurrencyAmount.toString().format("%.3f")// TODO fix it
             }
         }

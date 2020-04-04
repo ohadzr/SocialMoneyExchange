@@ -52,7 +52,7 @@
             android:layout_marginTop="220dp"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="0dp"
-            android:text="No distance limitations" />
+            android:text="Location limitation" />
         <com.google.android.material.button.MaterialButton
             android:id="@+id/submit_button_request"
             android:layout_width="wrap_content"

@@ -73,6 +73,7 @@ class RequestFragment : Fragment() {
             pickedAmount = arguments!!.getString("pickedAmount").toString()
             savedRequestedCurrencies = arguments!!.getStringArrayList("savedRequestedCurrencies") as ArrayList<String>
             savedRequestId = arguments!!.getString("savedRequestId").toString()
+            println("tamir $radius $latitude $longitude $myCurrency $savedAddedCoins $pickedAmount $savedRequestedCurrencies $savedRequestId")
         }
 
     }
@@ -242,7 +243,7 @@ class RequestFragment : Fragment() {
         val userId = currentFirebaseUser!!.uid
         val locationButton:Button = view.limit_distance
         if(savedRequestId!=""){
-            submit_button_request.text = "Update"
+            view.submit_button_request.text = "Update"
         }
         if(radius!= 0.0){
 

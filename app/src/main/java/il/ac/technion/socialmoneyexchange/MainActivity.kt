@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         supportActionBar?.setDisplayShowTitleEnabled(false)
         navView.setNavigationItemSelectedListener(this)
 
-        if(!intent.getStringExtra("fromMap").isNullOrEmpty()) {
+        if(!intent.getStringExtra("fromMap").isNullOrEmpty()||!intent.getStringExtra("fromEdit").isNullOrEmpty()) {
             val bundle = Bundle()
             bundle.putString("fromMapOrEdit","true")
             bundle.putDouble("Radius",intent.getStringExtra("Radius").toDouble())
@@ -69,8 +69,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             bundle.putStringArrayList("savedRequestedCurrencies",intent.getStringArrayListExtra("savedRequestedCurrencies"))
             bundle.putString("savedRequestId",intent.getStringExtra("savedRequestId"))
             navController?.navigate(R.id.requestFragment, bundle)
-
         }
+
+
+
 
     }
 

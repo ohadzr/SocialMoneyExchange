@@ -2,8 +2,7 @@ package il.ac.technion.socialmoneyexchange
 
 
 import android.graphics.Color
-import android.graphics.Typeface
-import android.text.style.StyleSpan
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,7 +28,6 @@ class MessageAdapter(val messages: ArrayList<Message>, val itemClick: (Message) 
         fun bindForecast(message: Message) {
             itemView.messageAdapterMessageItem.text = message.text
             itemView.messageAdapterMessageItem.textSize = 16F
-            itemView.messageAdapterMessageItem.setTypeface(null,Typeface.BOLD)
             if(message.colorChoose)
                 itemView.messageAdapterMessageItem.setTextColor(Color.BLUE)
 //                itemView.setOnClickListener { itemClick(this) }

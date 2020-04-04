@@ -10,8 +10,8 @@
     <ImageButton
         android:id="@+id/delete_button"
         android:layout_width="20dp"
-        android:layout_height="26dp"
-        android:layout_marginEnd="24dp"
+        android:layout_height="20dp"
+        android:layout_marginEnd="16dp"
         android:background="@drawable/delete_red"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -28,8 +28,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/swap_trans"
-        tools:srcCompat="@drawable/swap_trans"
+        app:srcCompat="@drawable/new_transfer"
+        tools:srcCompat="@drawable/new_transfer"
         android:contentDescription="@string/transaction_request_image" />
 
     <TextView

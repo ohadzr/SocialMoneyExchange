@@ -18,8 +18,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/swap_trans"
-        tools:srcCompat="@drawable/swap_trans" />
+        app:srcCompat="@drawable/offer_exchange"
+        tools:srcCompat="@drawable/offer_exchange" />
 
     <TextView
         android:id="@+id/user_name_text"

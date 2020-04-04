@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -37,10 +38,14 @@ class OffersFragment : Fragment() {
         offersList = mutableListOf<Offer>()
 
         // init the RecyclerView Adapter
-        linearLayoutManager = LinearLayoutManager(requireContext())
+        val context = requireContext()
+        linearLayoutManager = LinearLayoutManager(context)
         binding.offersRecyclerView.layoutManager = linearLayoutManager
-        adapter = OfferAdapter(offersList, requireContext())
+        adapter = OfferAdapter(offersList, context)
         binding.offersRecyclerView.adapter = adapter
+        binding.offersRecyclerView.addItemDecoration(
+            DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
+        )
 
         return binding.root
     }

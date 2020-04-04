@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import il.ac.technion.socialmoneyexchange.databinding.FragmentMainBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -48,6 +49,9 @@ class MainFragment : Fragment() {
         binding.transactionsRecyclerView.layoutManager = linearLayoutManager
         adapter = TransactionAdapter(transactionList, requireContext())
         binding.transactionsRecyclerView.adapter = adapter
+        binding.transactionsRecyclerView.addItemDecoration(
+            DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
+        )
 
         return binding.root
     }

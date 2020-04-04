@@ -23,8 +23,6 @@
                 android:contentDescription="@string/logo_image"
                 android:padding="6dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/swap_trans"
@@ -33,6 +31,7 @@
 
             <TextView
                 android:id="@+id/offers_text"
+                style="@style/Headers"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"

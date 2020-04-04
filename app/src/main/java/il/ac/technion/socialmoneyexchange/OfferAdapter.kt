@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat.startActivity
+import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
@@ -18,12 +19,13 @@ import okhttp3.*
 import java.io.IOException
 
 class OfferAdapter(val context: Context) : RecyclerView.Adapter<OfferViewHolder>() {
+
     var offersList = listOf<Offer>()
         set(value) {
             field = value
             notifyDataSetChanged()
         }
-    var offerIds = listOf<String>()
+    var offerIDs = listOf<String>()
         set(value) {
             field = value
             notifyDataSetChanged()
@@ -46,9 +48,9 @@ class OfferAdapter(val context: Context) : RecyclerView.Adapter<OfferViewHolder>
         holder.status.text = offersList[position].status
         holder.buttonChat.setOnClickListener(){
             val intent = Intent(context, ChatActivity::class.java)
-            intent.putExtra("offerId",offerIds[position])
+            intent.putExtra("offerId",offerIDs[position])
             context.startActivity(intent)
-                    }
+        }
         // check if no value was set by user. If not, load default coin rate
         if (offersList[position].coinAmount2!!.toInt() == -1) {
             val url = "https://api.exchangeratesapi.io/latest"
@@ -67,7 +69,7 @@ class OfferAdapter(val context: Context) : RecyclerView.Adapter<OfferViewHolder>
                     val coin1 = offersList[position].coinName1
                     val coin2 = offersList[position].coinName2
                     rate = myApi.rates[coin1]!! / myApi.rates[coin2]!!
-                    // update rate
+
 
 
                 }
@@ -79,10 +81,12 @@ class OfferAdapter(val context: Context) : RecyclerView.Adapter<OfferViewHolder>
             var notUpdated = true
             while(notUpdated){
                 if(rate!=null) {
+                    // update rate
                     holder.rate.text = String.format("%.3f", rate)
 
                     // Update coin 2 value
                     holder.coin_amount2.text = String.format("%.3f", rate!! * offersList[position].coinAmount1!!)
+
                     notUpdated = false
                 }
             }
@@ -93,6 +97,11 @@ class OfferAdapter(val context: Context) : RecyclerView.Adapter<OfferViewHolder>
         else {
             holder.rate.text = String.format("%.3f",offersList[position].coinAmount1!! / offersList[position].coinAmount2!!)
             holder.coin_amount2.text = String.format("%.3f",offersList[position].coinAmount2)
+        }
+
+        holder.itemView.setOnClickListener {
+            //TODO: open from here the offer fragment with offerIDs[position] as offer ID
+            Toast.makeText(context, offerIDs[position] , Toast.LENGTH_LONG).show()
         }
     }
 

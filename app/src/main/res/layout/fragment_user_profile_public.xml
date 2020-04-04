@@ -46,12 +46,13 @@
 
             <TextView
                 android:id="@+id/name_text"
+                style="@style/Username"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                tools:hint="@string/full_name"
+                android:text="@string/full_name"
                 android:padding="6dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -61,6 +62,7 @@
 
             <TextView
                 android:id="@+id/reviews_text"
+                style="@style/Headers"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"

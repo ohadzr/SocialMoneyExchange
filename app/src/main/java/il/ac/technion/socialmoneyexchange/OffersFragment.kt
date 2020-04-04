@@ -23,7 +23,6 @@ class OffersFragment : Fragment() {
     private lateinit var binding: FragmentOffersBinding
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var database: FirebaseDatabase
-    private lateinit var offersList: MutableList<Offer>
     private lateinit var adapter: OfferAdapter
 
     override fun onCreateView(
@@ -34,8 +33,6 @@ class OffersFragment : Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_offers, container, false)
 
         database = FirebaseDatabase.getInstance()
-
-        offersList = mutableListOf<Offer>()
 
         // init the RecyclerView Adapter
         val context = requireContext()
@@ -87,8 +84,8 @@ class OffersFragment : Fragment() {
                     }
                 }
                 // Update view using adapter
-                adapter.offerIds = offerIDs
                 adapter.offersList = offerList
+                adapter.offerIDs = offerIDs
             }
 
             override fun onCancelled(error: DatabaseError) {

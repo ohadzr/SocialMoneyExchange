@@ -46,7 +46,8 @@ class UserProfilePublicFragment : Fragment() {
 
         // Creates a vertical Layout Manager
         linearLayoutManager = LinearLayoutManager(requireContext())
-        reviewRecyclerView.layoutManager = linearLayoutManager as RecyclerView.LayoutManager?
+        reviewRecyclerView.layoutManager = linearLayoutManager
+
 
         val currentFirebaseUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
         val userId = currentFirebaseUser!!.uid

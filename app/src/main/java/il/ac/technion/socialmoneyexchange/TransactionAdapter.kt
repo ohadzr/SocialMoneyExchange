@@ -20,7 +20,7 @@ class TransactionAdapter(val transactionList: MutableList<TransactionRequest>,
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.coin_text.text = transactionList[position].myCurrency
-        holder.coin_text2.text = "Time stamp"
+        holder.coin_text2.text = "Date"
         holder.coin_value.text = transactionList[position].requestedAmount.toString()
         holder.coin_value2.text = transactionList[position].timeStamp
     }

@@ -417,7 +417,7 @@ class RequestFragment : Fragment() {
                 println("i is "+i.toString()+" list size is "+inputTextList.size.toString()+"coins added -1 are "+addedCoins.toString()+"requested currency is "+requestedCurrencies[i])
                 val requestedCurrencyAmount = (myApi.rates[requestedCurrencies[i]]!!/myRate)*requestedAmount.toDouble()
 
-                inputTextList[i].text = requestedCurrencyAmount.toString().format("%.3f")// TODO fix it
+                inputTextList[i].text = "%.3f".format(requestedCurrencyAmount.toFloat())
             }
         }
         

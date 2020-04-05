@@ -100,8 +100,19 @@ class OfferAdapter(val context: Context) : RecyclerView.Adapter<OfferViewHolder>
         }
 
         holder.itemView.setOnClickListener {
-            //TODO: open from here the offer fragment with offerIDs[position] as offer ID
-            Toast.makeText(context, offerIDs[position] , Toast.LENGTH_LONG).show()
+            val intent = Intent(context, MainActivity::class.java)
+            intent.putExtra("fromOffer","true")
+            intent.putExtra("offerId",offerIDs[position])
+            intent.putExtra("userID1",offersList[position].userID1)
+            intent.putExtra("userID2",offersList[position].userID2)
+            intent.putExtra("coinAmount1",offersList[position].coinAmount1.toString())
+            intent.putExtra("coinAmount2",offersList[position].coinAmount2.toString())
+            intent.putExtra("coinName1",offersList[position].coinName1)
+            intent.putExtra("coinName2",offersList[position].coinName2)
+            intent.putExtra("lastUpdater",offersList[position].lastUpdater)
+            intent.putExtra("status",offersList[position].status)
+            context.startActivity(intent)
+//            Toast.makeText(context, offerIDs[position] , Toast.LENGTH_LONG).show()
         }
     }
 

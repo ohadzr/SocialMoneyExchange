@@ -4,12 +4,12 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -19,10 +19,54 @@ import com.google.firebase.database.*
 class OfferFragment : Fragment() {
 
     private lateinit var database: FirebaseDatabase
-
+    lateinit var offerId:String
+    lateinit var userID1:String
+    lateinit var userID2:String
+    lateinit var coinAmount1:String
+    lateinit var coinAmount2:String
+    lateinit var coinName1:String
+    lateinit var coinName2:String
+    lateinit var lastUpdater:String
+    lateinit var status:String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if(savedInstanceState!=null){
+            offerId = savedInstanceState.getString("offerId").toString()
+            userID1 = savedInstanceState.getString("userID1").toString()
+            userID2 = savedInstanceState.getString("userID2").toString()
+            coinAmount1 = savedInstanceState.getString("coinAmount1").toString()
+            coinAmount2 = savedInstanceState.getString("coinAmount2").toString()
+            coinName1 = savedInstanceState.getString("coinName1").toString()
+            coinName2 = savedInstanceState.getString("coinName2").toString()
+            lastUpdater = savedInstanceState.getString("lastUpdater").toString()
+            status = savedInstanceState.getString("status").toString()
+        }
 
+        else if(arguments!=null){
+            offerId = arguments!!.getString("offerId").toString()
+            userID1 = arguments!!.getString("userID1").toString()
+            userID2 = arguments!!.getString("userID2").toString()
+            coinAmount1 = arguments!!.getString("coinAmount1").toString()
+            coinAmount2 = arguments!!.getString("coinAmount2").toString()
+            coinName1 = arguments!!.getString("coinName1").toString()
+            coinName2 = arguments!!.getString("coinName2").toString()
+            lastUpdater = arguments!!.getString("lastUpdater").toString()
+            status = arguments!!.getString("status").toString()
+
+        }
+
+    }
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("offerId",offerId)
+        outState.putString("userID1",userID1)
+        outState.putString("userID2",userID2)
+        outState.putString("coinAmount1",coinAmount1)
+        outState.putString("coinAmount2",coinAmount2)
+        outState.putString("coinName1",coinName1)
+        outState.putString("coinName2",coinName2)
+        outState.putString("lastUpdater",lastUpdater)
+        outState.putString("status",status)
     }
 
     override fun onCreateView(
@@ -36,17 +80,17 @@ class OfferFragment : Fragment() {
         val currentFirebaseUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
         val userId = currentFirebaseUser!!.uid
 
-        val offerID = "randomOfferID"
+//        val offerID = "randomOfferID"
         // TODO: load real data from database using offerID
-        val coinName1 = "CAD"
-        val coinAmount1 = 100
-        val coinName2 = "USD"
-        val coinAmount2 = 300
+//        val coinName1 = "CAD"
+//        val coinAmount1 = 100
+//        val coinName2 = "USD"
+//        val coinAmount2 = 300
 
         //FIXME: get this from API
         val originalRate = coinAmount1.toFloat() / coinAmount2.toFloat()
 
-        val offersRef: DatabaseReference = database.getReference("offers").child(offerID)
+        val offersRef: DatabaseReference = database.getReference("offers").child(offerId)
         val userOfferRef: DatabaseReference =
             database.getReference("users").child(userId).child("offers")
 //        offersRef.setValue(Offer("ohad",coinName1, coinAmount1.toFloat(), "tamir",coinName2, coinAmount2.toFloat(),"ACTIVE"))
@@ -80,9 +124,9 @@ class OfferFragment : Fragment() {
             saveOrCancelOffer(
                 database, userId,
                 coinName1, coinAmount1TextView,
-                coinName2, coinAmount2TextView, offerID, cancel = false
+                coinName2, coinAmount2TextView, offerId, cancel = false
             )
-            findNavController().popBackStack()
+            findNavController().navigate(R.id.offersFragment)
         }
 
         // Set decline button to cancel transaction and save it to DB
@@ -90,9 +134,9 @@ class OfferFragment : Fragment() {
             saveOrCancelOffer(
                 database, userId,
                 coinName1, coinAmount1TextView,
-                coinName2, coinAmount2TextView, offerID, cancel = true
+                coinName2, coinAmount2TextView, offerId, cancel = true
             )
-            findNavController().popBackStack()
+            findNavController().navigate(R.id.offersFragment)
         }
 
 
@@ -196,14 +240,14 @@ class OfferFragment : Fragment() {
 
     // Write data to text boxes
     private fun resetTextValues(
-        coinName1: String, coinAmount1: Int, coinName2: String, coinAmount2: Int,
+        coinName1: String, coinAmount1: String, coinName2: String, coinAmount2: String,
         coinName1TextView: TextView, coinName2TextView: TextView,
         coinAmount1TextView: TextView, coinAmount2TextView: TextView
     ) {
         coinName1TextView.text = coinName1
         coinName2TextView.text = coinName2
-        coinAmount1TextView.text = coinAmount1.toString()
-        coinAmount2TextView.text = coinAmount2.toString()
+        coinAmount1TextView.text = coinAmount1
+        coinAmount2TextView.text = coinAmount2
     }
 
 
@@ -226,5 +270,6 @@ class OfferFragment : Fragment() {
         rateTextView.text = newText
 
     }
+
 
 }

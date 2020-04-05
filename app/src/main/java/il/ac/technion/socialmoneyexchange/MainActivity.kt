@@ -21,6 +21,7 @@ import com.firebase.ui.auth.IdpResponse
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import il.ac.technion.socialmoneyexchange.databinding.ActivityMainBinding
+import kotlinx.android.synthetic.main.offer_list_item.*
 
 object GlobalVariable {
 
@@ -56,7 +57,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         supportActionBar?.setDisplayShowTitleEnabled(false)
         navView.setNavigationItemSelectedListener(this)
+        if(!intent.getStringExtra("fromOffer").isNullOrBlank()){
+            val bundle = Bundle()
+            bundle.putString("offerId",intent.getStringExtra("offerId"))
+            bundle.putString("userID1",intent.getStringExtra("userID1"))
+            bundle.putString("userID2",intent.getStringExtra("userID2"))
+            bundle.putString("coinAmount1",intent.getStringExtra("coinAmount1"))
+            bundle.putString("coinAmount2",intent.getStringExtra("coinAmount2"))
+            bundle.putString("coinName1",intent.getStringExtra("coinName1"))
+            bundle.putString("coinName2",intent.getStringExtra("coinName2"))
+            bundle.putString("lastUpdater",intent.getStringExtra("lastUpdater"))
+            bundle.putString("status",intent.getStringExtra("status"))
+            navController?.navigate(R.id.offerFragment, bundle)
 
+        }
         if(!intent.getStringExtra("fromMap").isNullOrEmpty()||!intent.getStringExtra("fromEdit").isNullOrEmpty()) {
             val bundle = Bundle()
             bundle.putString("fromMapOrEdit","true")

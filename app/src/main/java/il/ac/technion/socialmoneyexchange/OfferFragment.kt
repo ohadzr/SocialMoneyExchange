@@ -14,6 +14,9 @@ import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
+import com.google.gson.GsonBuilder
+import okhttp3.*
+import java.io.IOException
 
 
 class OfferFragment : Fragment() {
@@ -28,6 +31,7 @@ class OfferFragment : Fragment() {
     lateinit var coinName2:String
     lateinit var lastUpdater:String
     lateinit var status:String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if(savedInstanceState!=null){
@@ -39,7 +43,7 @@ class OfferFragment : Fragment() {
             coinName1 = savedInstanceState.getString("coinName1").toString()
             coinName2 = savedInstanceState.getString("coinName2").toString()
             lastUpdater = savedInstanceState.getString("lastUpdater").toString()
-            status = savedInstanceState.getString("status").toString()
+
         }
 
         else if(arguments!=null){
@@ -80,15 +84,29 @@ class OfferFragment : Fragment() {
         val currentFirebaseUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
         val userId = currentFirebaseUser!!.uid
 
-//        val offerID = "randomOfferID"
-        // TODO: load real data from database using offerID
-//        val coinName1 = "CAD"
-//        val coinAmount1 = 100
-//        val coinName2 = "USD"
-//        val coinAmount2 = 300
+        val url = "https://api.exchangeratesapi.io/latest"
+        val request = Request.Builder().url(url).build()
+        val client = OkHttpClient()
+        var myApi :CurrencyApi
+        var originalRate: Float? = null
+        client.newCall(request).enqueue(object : Callback {
+            override fun onResponse(call: Call, response: Response) {
 
-        //FIXME: get this from API
-        val originalRate = coinAmount1.toFloat() / coinAmount2.toFloat()
+                val body = response.body()?.string()
+                val gson = GsonBuilder().create()
+
+                myApi = gson.fromJson(body, CurrencyApi::class.java)
+                myApi.rates["EUR"] = 1.0
+                originalRate = (myApi.rates[coinName1]!! / myApi.rates[coinName2]!!).toFloat()
+
+            }
+
+            override fun onFailure(call: Call, e: IOException) {
+                Log.d("Ohad", "Error loading currency API")
+            }
+        })
+
+//        val originalRate = coinAmount1.toFloat() / coinAmount2.toFloat()
 
         val offersRef: DatabaseReference = database.getReference("offers").child(offerId)
         val userOfferRef: DatabaseReference =
@@ -207,16 +225,24 @@ class OfferFragment : Fragment() {
                     // ACTIVE - first time reviewing offer
                     "ACTIVE" -> {
                         offerRef.child("status").setValue("PENDING")
-                        offerRef.child("coinAmount1").setValue(coinAmount1TextView.text.toString())
-                        offerRef.child("coinAmount2").setValue(coinAmount2TextView.text.toString())
+                        var text:String = coinAmount1TextView.text.toString()
+                        val coinAmount1Float: Float = text.toFloat()
+                        text = coinAmount2TextView.text.toString()
+                        val coinAmount2Float: Float = text.toFloat()
+                        offerRef.child("coinAmount1").setValue(coinAmount1Float)
+                        offerRef.child("coinAmount2").setValue(coinAmount2Float)
                     }
 
                     // PENDING - at least one user reviewed offer and accepted it
                     "PENDING" -> {
                         if (updaterId != userId)
                             offerRef.child("status").setValue("CONFIRMED")
-                        offerRef.child("coinAmount1").setValue(coinAmount1TextView.text.toString())
-                        offerRef.child("coinAmount2").setValue(coinAmount2TextView.text.toString())
+                        var text:String = coinAmount1TextView.text.toString()
+                        val coinAmount1Float: Float = text.toFloat()
+                        text = coinAmount2TextView.text.toString()
+                        val coinAmount2Float: Float = text.toFloat()
+                        offerRef.child("coinAmount1").setValue(coinAmount1Float)
+                        offerRef.child("coinAmount2").setValue(coinAmount2Float)
                     }
 
                     // CONFIRMED - both users accepted the offer
@@ -254,18 +280,25 @@ class OfferFragment : Fragment() {
     // update the exchange rate box according to coin amounts
     private fun updateExchangeRate(
         view: View, coinAmount1TextView: TextView,
-        coinAmount2TextView: TextView, originalRate: Float
+        coinAmount2TextView: TextView, originalRate: Float?
     ) {
         val rateTextView: TextView = view.findViewById(R.id.exchange_rate2) as TextView
         if (coinAmount1TextView.text.toString() == "" || coinAmount2TextView.text.toString() == "") {
             rateTextView.text = "N/A"
             return
         }
-        val new_rate = coinAmount1TextView.text.toString().toFloat() /
-                coinAmount2TextView.text.toString().toFloat()
-        var newText = "%.3f".format(new_rate)
-        if (new_rate != originalRate)
-            newText = "Offer rate: %.3f    Suggested rate: %.3f".format(new_rate, originalRate)
+
+        var newRate: Float? = originalRate
+        if (coinAmount1TextView.text.toString() !== "null" && coinAmount2TextView.text.toString() !== "null") {
+
+            newRate = coinAmount2TextView.text.toString().toFloat() /
+                    coinAmount1TextView.text.toString().toFloat()
+        }
+
+        Log.d("Ohad", "newRate: "+newRate.toString())
+        var newText = "%.3f".format(newRate)
+        if (newRate != originalRate && originalRate != null)
+            newText = "Offer rate: %.3f    Suggested rate: %.3f".format(newRate, originalRate)
 
         rateTextView.text = newText
 

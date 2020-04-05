@@ -165,7 +165,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             when (authenticationState) {
                 // When user is logged in
                 LoginViewModel.AuthenticationState.AUTHENTICATED -> {
-                    Toast.makeText(this, "Logged in", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(this, "Logged in", Toast.LENGTH_SHORT).show()
                     navView.menu.findItem(R.id.action_login_logout).setTitle(R.string.logout_button_text)
                 }
                 else -> {

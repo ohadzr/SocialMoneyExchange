@@ -90,7 +90,7 @@ class OffersFragment : Fragment() {
 
             override fun onCancelled(error: DatabaseError) {
                 // Failed to read value
-                Log.w("Ohad", "Failed to read value.", error.toException())
+                Log.d("Ohad", "Failed to read value.", error.toException())
             }
         })
     }

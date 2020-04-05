@@ -100,7 +100,7 @@ class MainFragment : Fragment() {
                     if (ids.contains(transactionSnapshot.key)) {
                         val transaction: TransactionRequest? = transactionSnapshot.getValue(TransactionRequest::class.java)
                         val transactionsKey = transactionSnapshot.key
-                        Log.d("Ohad", "Loaded transaction: $transaction")
+//                        Log.d("Ohad", "Loaded transaction: $transaction")
                         if (transaction != null && transactionsKey != null) {
                             transactionsList.add(transaction)
                             transactionsIDs.add(transactionsKey)

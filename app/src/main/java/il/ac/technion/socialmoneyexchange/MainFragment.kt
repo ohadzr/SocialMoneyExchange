@@ -59,8 +59,6 @@ class MainFragment : Fragment() {
         val swipeHandler = object : SwipeToDeleteCallback(requireContext()) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 adapter.removeAt(viewHolder.adapterPosition)
-//                binding.transactionsRecyclerView.removeViewAt(viewHolder.adapterPosition)
-//                (binding.transactionsRecyclerView.adapter as TransactionAdapter).notifyItemRangeRemoved(viewHolder.adapterPosition,1)
             }
         }
         val itemTouchHelper = ItemTouchHelper(swipeHandler)

@@ -21,12 +21,12 @@ import java.io.IOException
 
 class OfferAdapter(val context: Context) : RecyclerView.Adapter<OfferViewHolder>() {
 
-    var offersList = listOf<Offer>()
+    var offersList = mutableListOf<Offer>()
         set(value) {
             field = value
             notifyDataSetChanged()
         }
-    var offerIDs = listOf<String>()
+    var offerIDs = mutableListOf<String>()
         set(value) {
             field = value
             notifyDataSetChanged()
@@ -47,13 +47,13 @@ class OfferAdapter(val context: Context) : RecyclerView.Adapter<OfferViewHolder>
         holder.coin_name2.text = offersList[position].coinName2
         holder.coin_amount.text = String.format("%.3f", offersList[position].coinAmount1)
         holder.status.text = offersList[position].status
-        if(offersList[position].status=="CANCELLED")
+        if (offersList[position].status == "CANCELLED")
             holder.status.setTextColor(Color.RED)
-        if(offersList[position].status=="CONFIRMED")
+        if (offersList[position].status == "CONFIRMED")
             holder.status.setTextColor(Color.GREEN)
-        holder.buttonChat.setOnClickListener(){
+        holder.buttonChat.setOnClickListener() {
             val intent = Intent(context, ChatActivity::class.java)
-            intent.putExtra("offerId",offerIDs[position])
+            intent.putExtra("offerId", offerIDs[position])
             context.startActivity(intent)
         }
         // check if no value was set by user. If not, load default coin rate
@@ -61,7 +61,7 @@ class OfferAdapter(val context: Context) : RecyclerView.Adapter<OfferViewHolder>
             val url = "https://api.exchangeratesapi.io/latest"
             val request = Request.Builder().url(url).build()
             val client = OkHttpClient()
-            var myApi :CurrencyApi
+            var myApi: CurrencyApi
             var rate: Double? = null
             client.newCall(request).enqueue(object : Callback {
                 override fun onResponse(call: Call, response: Response) {
@@ -76,7 +76,6 @@ class OfferAdapter(val context: Context) : RecyclerView.Adapter<OfferViewHolder>
                     rate = myApi.rates[coin1]!! / myApi.rates[coin2]!!
 
 
-
                 }
 
                 override fun onFailure(call: Call, e: IOException) {
@@ -84,13 +83,14 @@ class OfferAdapter(val context: Context) : RecyclerView.Adapter<OfferViewHolder>
                 }
             })
             var notUpdated = true
-            while(notUpdated){
-                if(rate!=null) {
+            while (notUpdated) {
+                if (rate != null) {
                     // update rate
                     holder.rate.text = String.format("%.3f", rate)
 
                     // Update coin 2 value
-                    holder.coin_amount2.text = String.format("%.3f", rate!! * offersList[position].coinAmount1!!)
+                    holder.coin_amount2.text =
+                        String.format("%.3f", rate!! * offersList[position].coinAmount1!!)
 
                     notUpdated = false
                 }
@@ -100,30 +100,49 @@ class OfferAdapter(val context: Context) : RecyclerView.Adapter<OfferViewHolder>
 
         // If already set once, load new rate
         else {
-            holder.rate.text = String.format("%.3f",offersList[position].coinAmount1!! / offersList[position].coinAmount2!!)
-            holder.coin_amount2.text = String.format("%.3f",offersList[position].coinAmount2)
+            holder.rate.text = String.format(
+                "%.3f",
+                offersList[position].coinAmount1!! / offersList[position].coinAmount2!!
+            )
+            holder.coin_amount2.text = String.format("%.3f", offersList[position].coinAmount2)
         }
 
         holder.itemView.setOnClickListener {
-            val intent = Intent(context, MainActivity::class.java)
-            intent.putExtra("fromOffer","true")
-            intent.putExtra("offerId",offerIDs[position])
-            intent.putExtra("userID1",offersList[position].userID1)
-            intent.putExtra("userID2",offersList[position].userID2)
-            intent.putExtra("coinAmount1",offersList[position].coinAmount1.toString())
-//            intent.putExtra("coinAmount2",offersList[position].coinAmount2.toString())
-            intent.putExtra("coinName1",offersList[position].coinName1)
-            intent.putExtra("coinName2",offersList[position].coinName2)
-            intent.putExtra("lastUpdater",offersList[position].lastUpdater)
-            intent.putExtra("status",offersList[position].status)
-            intent.putExtra("rate", holder.rate.text)
-            intent.putExtra("coinAmount2", holder.coin_amount2.text)
-            context.startActivity(intent)
-//            Toast.makeText(context, offerIDs[position] , Toast.LENGTH_LONG).show()
+            if(offersList[position].status=="CANCELLED"||offersList[position].status=="CONFIRMED")
+                Toast.makeText(context,"Can no longer change the offer",Toast.LENGTH_LONG).show()
+            else {
+                val intent = Intent(context, MainActivity::class.java)
+                intent.putExtra("fromOffer", "true")
+                intent.putExtra("offerId", offerIDs[position])
+                intent.putExtra("userID1", offersList[position].userID1)
+                intent.putExtra("userID2", offersList[position].userID2)
+                intent.putExtra("coinAmount1", offersList[position].coinAmount1.toString())
+                intent.putExtra("coinName1", offersList[position].coinName1)
+                intent.putExtra("coinName2", offersList[position].coinName2)
+                intent.putExtra("lastUpdater", offersList[position].lastUpdater)
+                intent.putExtra("status", offersList[position].status)
+                intent.putExtra("rate", holder.rate.text)
+                intent.putExtra("coinAmount2", holder.coin_amount2.text)
+                context.startActivity(intent)
+            }
         }
     }
 
 
+    fun removeAt(position: Int) {
+        val database = FirebaseDatabase.getInstance()
+        database.getReference("offers").child(offerIDs[position]).removeValue()
+        offersList.removeAt(position)
+        offerIDs.removeAt(position)
+        notifyItemRemoved(position)
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return if(offersList[position].status=="CANCELLED"||offersList[position].status=="CONFIRMED")
+            1
+        else
+            0
+    }
 
     private fun loadUserFirstAndLastName(userID: String, textView: TextView) {
 

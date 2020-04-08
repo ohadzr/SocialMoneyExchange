@@ -8,7 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
@@ -44,6 +46,13 @@ class OffersFragment : Fragment() {
             DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
         )
 
+        val swipeHandler = object : SwipeToDeleteCallback(requireContext()) {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                adapter.removeAt(viewHolder.adapterPosition)
+            }
+        }
+        val itemTouchHelper = ItemTouchHelper(swipeHandler)
+        itemTouchHelper.attachToRecyclerView(binding.offersRecyclerView)
         return binding.root
     }
 

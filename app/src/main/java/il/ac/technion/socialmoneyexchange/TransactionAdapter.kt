@@ -8,16 +8,17 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.transaction_list_item.view.*
 
 class TransactionAdapter(val context: Context) : RecyclerView.Adapter<ViewHolder>() {
 
-    var transactionList = listOf<TransactionRequest>()
+    var transactionList = mutableListOf<TransactionRequest>()
     set(value) {
         field = value
         notifyDataSetChanged()
     }
-    var transactionIDs = listOf<String>()
+    var transactionIDs = mutableListOf<String>()
         set(value) {
             field = value
             notifyDataSetChanged()
@@ -36,9 +37,10 @@ class TransactionAdapter(val context: Context) : RecyclerView.Adapter<ViewHolder
         holder.coin_text.text = transactionList[position].myCurrency
         holder.coin_text2.text = "Date"
         holder.coin_value.text = transactionList[position].requestedAmount.toString()
-        holder.coin_value2.text = transactionList[position].timeStamp
+        val timeStamp = transactionList[position].timeStamp
+        var date = timeStamp!!.substring(6,8)+"/"+timeStamp!!.substring(4,6)+"/"+timeStamp!!.substring(0,4)
+        holder.coin_value2.text = date
         holder.itemView.setOnClickListener {
-            //TODO: open from here the transaction fragment with transactionIDs[position] as transaction ID
             val intent = Intent(context, MainActivity::class.java)
             intent.putExtra("Radius",transactionList[position].radius.toString())
             intent.putExtra("Lat",transactionList[position].latitude.toString())
@@ -57,11 +59,17 @@ class TransactionAdapter(val context: Context) : RecyclerView.Adapter<ViewHolder
             context.startActivity(intent)
         }
         holder.deleteBtn.setOnClickListener(){
-            Toast.makeText(context,"deleted" , Toast.LENGTH_LONG).show()
+            holder
         }
 
     }
-
+    fun removeAt(position: Int) {
+        val database = FirebaseDatabase.getInstance()
+        database.getReference("transactionRequests").child(transactionIDs[position]).removeValue()
+        transactionList.removeAt(position)
+        transactionIDs.removeAt(position)
+        notifyItemRemoved(position)
+    }
 
 //    fun updateItems(newListOfItems: MutableList<TransactionRequest>) {
 //        transactionList.clear()

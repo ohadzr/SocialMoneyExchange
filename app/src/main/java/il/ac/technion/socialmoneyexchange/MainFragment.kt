@@ -10,7 +10,9 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import il.ac.technion.socialmoneyexchange.databinding.FragmentMainBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -46,6 +48,7 @@ class MainFragment : Fragment() {
 //        transactionList = mutableListOf<TransactionRequest>()
 
         // init the RecyclerView Adapter
+
         linearLayoutManager = LinearLayoutManager(requireContext())
         binding.transactionsRecyclerView.layoutManager = linearLayoutManager
         adapter = TransactionAdapter(requireContext())
@@ -53,7 +56,15 @@ class MainFragment : Fragment() {
         binding.transactionsRecyclerView.addItemDecoration(
             DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
         )
-
+        val swipeHandler = object : SwipeToDeleteCallback(requireContext()) {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                adapter.removeAt(viewHolder.adapterPosition)
+//                binding.transactionsRecyclerView.removeViewAt(viewHolder.adapterPosition)
+//                (binding.transactionsRecyclerView.adapter as TransactionAdapter).notifyItemRangeRemoved(viewHolder.adapterPosition,1)
+            }
+        }
+        val itemTouchHelper = ItemTouchHelper(swipeHandler)
+        itemTouchHelper.attachToRecyclerView(binding.transactionsRecyclerView)
         return binding.root
     }
 

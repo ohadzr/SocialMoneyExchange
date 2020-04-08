@@ -321,14 +321,14 @@ class RequestFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString("PickedCurrency",myCurrency)
-        outState.putFloat("myAddedCoins",myAddedCoins)
-        outState.putStringArrayList("requestedCurrencies",requestedCurrencies)
-        outState.putString("pickedAmount",pickedAmount)
-        outState.putDouble("Longitude",longitude)
-        outState.putDouble("Latitude",latitude)
-        outState.putDouble("Radius",radius)
-        outState.putString("savedRequestId",savedRequestId)
+        outState.putString("PickedCurrency", myCurrency)
+        outState.putFloat("myAddedCoins", myAddedCoins)
+        outState.putStringArrayList("requestedCurrencies", requestedCurrencies)
+        outState.putString("pickedAmount", pickedAmount)
+        outState.putDouble("Longitude", longitude)
+        outState.putDouble("Latitude", latitude)
+        outState.putDouble("Radius", radius)
+        outState.putString("savedRequestId", savedRequestId)
     }
 
 
@@ -370,8 +370,10 @@ class RequestFragment : Fragment() {
             val spinnerTopDist = dpToPx(requireContext(),260+30*addedCoins.toInt()).toInt()
             spinnerParam.topMargin = spinnerTopDist
             spinnerParam.marginStart = spinnerEdgeDist
+
             spinner.layoutParams = spinnerParam
-                        spinner.onItemSelectedListener =
+
+            spinner.onItemSelectedListener =
                 (object : AdapterView.OnItemSelectedListener {
                     override fun onNothingSelected(p0: AdapterView<*>?) {}
                     override fun onItemSelected(

@@ -33,7 +33,13 @@ class OfferAdapter(val context: Context) : RecyclerView.Adapter<OfferViewHolder>
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OfferViewHolder {
-        return OfferViewHolder(LayoutInflater.from(context).inflate(R.layout.offer_list_item, parent, false))
+        return OfferViewHolder(
+            LayoutInflater.from(context).inflate(
+                R.layout.offer_list_item,
+                parent,
+                false
+            )
+        )
     }
 
     override fun getItemCount(): Int {
@@ -108,8 +114,8 @@ class OfferAdapter(val context: Context) : RecyclerView.Adapter<OfferViewHolder>
         }
 
         holder.itemView.setOnClickListener {
-            if(offersList[position].status=="CANCELLED"||offersList[position].status=="CONFIRMED")
-                Toast.makeText(context,"Can no longer change the offer",Toast.LENGTH_LONG).show()
+            if (offersList[position].status == "CANCELLED" || offersList[position].status == "CONFIRMED")
+                Toast.makeText(context, "Can no longer change the offer", Toast.LENGTH_LONG).show()
             else {
                 val intent = Intent(context, MainActivity::class.java)
                 intent.putExtra("fromOffer", "true")
@@ -138,7 +144,7 @@ class OfferAdapter(val context: Context) : RecyclerView.Adapter<OfferViewHolder>
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if(offersList[position].status=="CANCELLED"||offersList[position].status=="CONFIRMED")
+        return if (offersList[position].status == "CANCELLED" || offersList[position].status == "CONFIRMED")
             1
         else
             0
@@ -173,7 +179,7 @@ class OfferAdapter(val context: Context) : RecyclerView.Adapter<OfferViewHolder>
 }
 
 
-class OfferViewHolder (view: View) : RecyclerView.ViewHolder(view) {
+class OfferViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     // Holds the TextView that will add each review to
     val user_name_text = view.user_name_text
     val user_name_text2 = view.user_name_text2

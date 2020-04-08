@@ -4,11 +4,13 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
@@ -22,19 +24,19 @@ import java.io.IOException
 class OfferFragment : Fragment() {
 
     private lateinit var database: FirebaseDatabase
-    lateinit var offerId:String
-    lateinit var userID1:String
-    lateinit var userID2:String
-    lateinit var coinAmount1:String
-    lateinit var coinAmount2:String
-    lateinit var coinName1:String
-    lateinit var coinName2:String
-    lateinit var lastUpdater:String
-    lateinit var status:String
+    lateinit var offerId: String
+    lateinit var userID1: String
+    lateinit var userID2: String
+    lateinit var coinAmount1: String
+    lateinit var coinAmount2: String
+    lateinit var coinName1: String
+    lateinit var coinName2: String
+    lateinit var lastUpdater: String
+    lateinit var status: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if(savedInstanceState!=null){
+        if (savedInstanceState != null) {
             offerId = savedInstanceState.getString("offerId").toString()
             userID1 = savedInstanceState.getString("userID1").toString()
             userID2 = savedInstanceState.getString("userID2").toString()
@@ -44,9 +46,7 @@ class OfferFragment : Fragment() {
             coinName2 = savedInstanceState.getString("coinName2").toString()
             lastUpdater = savedInstanceState.getString("lastUpdater").toString()
 
-        }
-
-        else if(arguments!=null){
+        } else if (arguments != null) {
             offerId = arguments!!.getString("offerId").toString()
             userID1 = arguments!!.getString("userID1").toString()
             userID2 = arguments!!.getString("userID2").toString()
@@ -60,17 +60,18 @@ class OfferFragment : Fragment() {
         }
 
     }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString("offerId",offerId)
-        outState.putString("userID1",userID1)
-        outState.putString("userID2",userID2)
-        outState.putString("coinAmount1",coinAmount1)
-        outState.putString("coinAmount2",coinAmount2)
-        outState.putString("coinName1",coinName1)
-        outState.putString("coinName2",coinName2)
-        outState.putString("lastUpdater",lastUpdater)
-        outState.putString("status",status)
+        outState.putString("offerId", offerId)
+        outState.putString("userID1", userID1)
+        outState.putString("userID2", userID2)
+        outState.putString("coinAmount1", coinAmount1)
+        outState.putString("coinAmount2", coinAmount2)
+        outState.putString("coinName1", coinName1)
+        outState.putString("coinName2", coinName2)
+        outState.putString("lastUpdater", lastUpdater)
+        outState.putString("status", status)
     }
 
     override fun onCreateView(
@@ -87,8 +88,19 @@ class OfferFragment : Fragment() {
         val url = "https://api.exchangeratesapi.io/latest"
         val request = Request.Builder().url(url).build()
         val client = OkHttpClient()
-        var myApi :CurrencyApi
+        var myApi: CurrencyApi
         var originalRate: Float? = null
+
+        requireActivity()
+            .onBackPressedDispatcher
+            .addCallback(this, object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    findNavController().navigate(R.id.offersFragment)
+
+                }
+            }
+            )
+
         client.newCall(request).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
 
@@ -225,7 +237,7 @@ class OfferFragment : Fragment() {
                     // ACTIVE - first time reviewing offer
                     "ACTIVE" -> {
                         offerRef.child("status").setValue("PENDING")
-                        var text:String = coinAmount1TextView.text.toString()
+                        var text: String = coinAmount1TextView.text.toString()
                         val coinAmount1Float: Float = text.toFloat()
                         text = coinAmount2TextView.text.toString()
                         val coinAmount2Float: Float = text.toFloat()
@@ -237,7 +249,7 @@ class OfferFragment : Fragment() {
                     "PENDING" -> {
                         if (updaterId != userId)
                             offerRef.child("status").setValue("CONFIRMED")
-                        var text:String = coinAmount1TextView.text.toString()
+                        var text: String = coinAmount1TextView.text.toString()
                         val coinAmount1Float: Float = text.toFloat()
                         text = coinAmount2TextView.text.toString()
                         val coinAmount2Float: Float = text.toFloat()
@@ -282,6 +294,7 @@ class OfferFragment : Fragment() {
         view: View, coinAmount1TextView: TextView,
         coinAmount2TextView: TextView, originalRate: Float?
     ) {
+
         val rateTextView: TextView = view.findViewById(R.id.exchange_rate2) as TextView
         if (coinAmount1TextView.text.toString() == "" || coinAmount2TextView.text.toString() == "") {
             rateTextView.text = "N/A"
@@ -295,7 +308,7 @@ class OfferFragment : Fragment() {
                     coinAmount1TextView.text.toString().toFloat()
         }
 
-        Log.d("Ohad", "newRate: "+newRate.toString())
+        Log.d("Ohad", "newRate: " + newRate.toString())
         var newText = "%.3f".format(newRate)
         if (newRate != originalRate && originalRate != null)
             newText = "Offer rate: %.3f    Suggested rate: %.3f".format(newRate, originalRate)

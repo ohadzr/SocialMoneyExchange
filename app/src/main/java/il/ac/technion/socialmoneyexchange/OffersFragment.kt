@@ -62,7 +62,9 @@ class OffersFragment : Fragment() {
         val currentFirebaseUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
 
         // if no user is connect
-        while (currentFirebaseUser == null) { return }
+        while (currentFirebaseUser == null) {
+            return
+        }
 
         // if user is connected
         val userId = currentFirebaseUser.uid
@@ -74,7 +76,7 @@ class OffersFragment : Fragment() {
     }
 
 
-    private fun loadOffersDataFromDB(ids: MutableList<String>, offersRef: DatabaseReference){
+    private fun loadOffersDataFromDB(ids: MutableList<String>, offersRef: DatabaseReference) {
         //dynamically load real transactions history
         val offerList = mutableListOf<Offer>()
         val offerIDs = mutableListOf<String>()
@@ -105,7 +107,7 @@ class OffersFragment : Fragment() {
     }
 
 
-    private fun getOffersIDFromDB(userRef: DatabaseReference, offersRef: DatabaseReference){
+    private fun getOffersIDFromDB(userRef: DatabaseReference, offersRef: DatabaseReference) {
         userRef.addListenerForSingleValueEvent(object : ValueEventListener {
             // This method is triggered once when the listener is attached
             override fun onDataChange(dataSnapshot: DataSnapshot) {

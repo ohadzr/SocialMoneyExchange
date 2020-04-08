@@ -58,9 +58,7 @@ class TransactionAdapter(val context: Context) : RecyclerView.Adapter<ViewHolder
             intent.putExtra("fromEdit","true")
             context.startActivity(intent)
         }
-        holder.deleteBtn.setOnClickListener(){
-            holder
-        }
+
 
     }
     fun removeAt(position: Int) {
@@ -85,5 +83,4 @@ class ViewHolder (view: View) : RecyclerView.ViewHolder(view) {
     val coin_text2 = view.coin_name_text2
     val coin_value = view.coin_value
     val coin_value2 = view.coin_value2
-    val deleteBtn = view.delete_button
 }

@@ -2,6 +2,7 @@ package il.ac.technion.socialmoneyexchange
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -46,6 +47,10 @@ class OfferAdapter(val context: Context) : RecyclerView.Adapter<OfferViewHolder>
         holder.coin_name2.text = offersList[position].coinName2
         holder.coin_amount.text = String.format("%.3f", offersList[position].coinAmount1)
         holder.status.text = offersList[position].status
+        if(offersList[position].status=="CANCELLED")
+            holder.status.setTextColor(Color.RED)
+        if(offersList[position].status=="CONFIRMED")
+            holder.status.setTextColor(Color.GREEN)
         holder.buttonChat.setOnClickListener(){
             val intent = Intent(context, ChatActivity::class.java)
             intent.putExtra("offerId",offerIDs[position])

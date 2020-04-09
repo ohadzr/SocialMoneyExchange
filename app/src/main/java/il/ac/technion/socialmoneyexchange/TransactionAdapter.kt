@@ -5,10 +5,10 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.transaction_list_item.view.*
 
 class TransactionAdapter(val context: Context) : RecyclerView.Adapter<ViewHolder>() {
@@ -73,10 +73,31 @@ class TransactionAdapter(val context: Context) : RecyclerView.Adapter<ViewHolder
 
 
     }
-
+    override fun getItemViewType(position: Int): Int {
+        return 1
+    }
     fun removeAt(position: Int) {
         val database = FirebaseDatabase.getInstance()
-        database.getReference("transactionRequests").child(transactionIDs[position]).removeValue()
+        val transactionId = transactionIDs[position]
+        database.getReference("transactionRequests").child(transactionId).removeValue()
+        val currentFirebaseUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
+        val userId = currentFirebaseUser!!.uid
+        val transactionsRef: DatabaseReference = database.getReference("users").child(userId).child("transactionRequests")
+        transactionsRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                for(data in dataSnapshot.children){
+                    val dbTransactionId = data.getValue<String>(String::class.java)
+                    if (transactionId==dbTransactionId){
+                        database.getReference("users").child(userId).child("transactionRequests").child(data.key.toString()).removeValue()
+                        break
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Failed to read value
+            }
+        })
         transactionList.removeAt(position)
         transactionIDs.removeAt(position)
         notifyItemRemoved(position)

@@ -8,11 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.content.ContextCompat.startActivity
 import android.widget.Toast
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.button.MaterialButton
 import com.google.firebase.database.*
 import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.offer_list_item.view.*
@@ -137,10 +134,35 @@ class OfferAdapter(val context: Context) : RecyclerView.Adapter<OfferViewHolder>
 
     fun removeAt(position: Int) {
         val database = FirebaseDatabase.getInstance()
-        database.getReference("offers").child(offerIDs[position]).removeValue()
+        val offerId = offerIDs[position]
+        val userId1 = offersList[position].userID1
+        val userId2 = offersList[position].userID2
+        database.getReference("offers").child(offerId).removeValue()
+        userId1?.let { removeOfferFromUser(it,offerId,database) }
+        userId2?.let { removeOfferFromUser(it,offerId,database) }
+
         offersList.removeAt(position)
         offerIDs.removeAt(position)
         notifyItemRemoved(position)
+    }
+
+    private fun removeOfferFromUser(userId: String, offerId: String, database: FirebaseDatabase) {
+        val offersRef: DatabaseReference = database.getReference("users").child(userId).child("offers")
+        offersRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                for(data in dataSnapshot.children){
+                    val dbOfferId = data.getValue<String>(String::class.java)
+                    if (offerId==dbOfferId){
+                        database.getReference("users").child(userId).child("offers").child(data.key.toString()).removeValue()
+                        break
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Failed to read value
+            }
+        })
     }
 
     override fun getItemViewType(position: Int): Int {

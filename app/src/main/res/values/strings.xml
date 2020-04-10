@@ -61,5 +61,7 @@
     <string name="transaction_request_image">transaction request image</string>
     <string name="delete_minus">-</string>
     <string name="delete_button">Delete button</string>
+    <string name="app_notification_channel_id">7149</string>
+    <string name="app_notification_channel_name">NewOffer</string>
 
 </resources>

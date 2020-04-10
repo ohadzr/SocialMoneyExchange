@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
+import com.google.firebase.iid.FirebaseInstanceId
 import il.ac.technion.socialmoneyexchange.databinding.FragmentNewUserBinding
 
 
@@ -54,7 +55,6 @@ class NewUserFragment : Fragment() {
                 Toast.makeText(requireContext(), "Please fill all fields", Toast.LENGTH_SHORT).show()
             }
             else {
-
                 val userInfo = User(firstName=firstName, lastName=lastName)
                 val currentFirebaseUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
                 val userId = currentFirebaseUser!!.uid

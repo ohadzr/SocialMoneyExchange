@@ -13,10 +13,12 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.tasks.OnCompleteListener
 import il.ac.technion.socialmoneyexchange.databinding.FragmentMainBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
+import com.google.firebase.iid.FirebaseInstanceId
 
 
 interface TransactionsIDCallback {
@@ -95,6 +97,25 @@ class MainFragment : Fragment() {
 
         // Get IDs of transactions and then data, finally load the data into adapter
         getTranscationsIDFromDB(userRef, transactionRef)
+
+        //write push notification token to database
+        writeTokenToDatabase(userRef)
+    }
+
+    private fun writeTokenToDatabase(userRef: DatabaseReference) {
+        FirebaseInstanceId.getInstance().instanceId
+            .addOnCompleteListener(OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.w("Ohad", "getInstanceId failed", task.exception)
+                    return@OnCompleteListener
+                }
+
+                // Get new Instance ID token
+                val token = task.result?.token
+                // Log and toast
+                Log.d("Ohad", "device push notification token: $token")
+                userRef.child("token").setValue(token)
+            })
     }
 
 
@@ -150,6 +171,7 @@ class MainFragment : Fragment() {
 
                 Log.d("Ohad", "Found IDs: $ids")
                 loadTransactionsDataFromDB(ids, transactionRef)
+
             }
 
             override fun onCancelled(error: DatabaseError) {

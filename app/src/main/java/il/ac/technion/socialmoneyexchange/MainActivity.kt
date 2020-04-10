@@ -2,7 +2,11 @@
 package il.ac.technion.socialmoneyexchange
 
 import android.app.Activity
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Intent
+import android.graphics.Color
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -18,8 +22,12 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.*
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.iid.InstanceIdResult
 import il.ac.technion.socialmoneyexchange.databinding.ActivityMainBinding
 import kotlinx.android.synthetic.main.offer_list_item.*
 
@@ -86,7 +94,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
 
-
+        createChannel(
+            getString(R.string.app_notification_channel_id),
+            getString(R.string.app_notification_channel_name)
+        )
 
     }
 
@@ -113,6 +124,28 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //
 //
 //    }
+
+
+    private fun createChannel(channelId: String, channelName: String) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationChannel = NotificationChannel(
+                channelId,
+                channelName,
+                NotificationManager.IMPORTANCE_HIGH
+            )
+            notificationChannel.enableLights(true)
+            notificationChannel.lightColor = Color.RED
+            notificationChannel.enableVibration(true)
+            notificationChannel.description = "We've found an offer for you!"
+
+            val notificationManager = this.getSystemService(
+                NotificationManager::class.java
+            )
+            notificationManager.createNotificationChannel(notificationChannel)
+        }
+    }
+
+
     override fun onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)

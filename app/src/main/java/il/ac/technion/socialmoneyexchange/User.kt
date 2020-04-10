@@ -8,5 +8,6 @@ data class User(
     var firstName: String? = "",
     var lastName: String? = "",
     var transactions : ArrayList<String>?=null,
-    var offers : ArrayList<String>?=null
+    var offers : ArrayList<String>?=null,
+    val token: String? = ""
 )

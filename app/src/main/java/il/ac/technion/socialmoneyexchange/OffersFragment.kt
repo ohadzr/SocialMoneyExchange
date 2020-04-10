@@ -86,7 +86,7 @@ class OffersFragment : Fragment() {
                     if (ids.contains(offerSnapshot.key)) {
                         val offer: Offer? = offerSnapshot.getValue(Offer::class.java)
                         val offerKey = offerSnapshot.key
-                        Log.d("Ohad", "Loaded transaction: $offer")
+                        //Log.d("Ohad", "Loaded transaction: $offer")
 
                         if (offer != null && offerKey != null) {
                             offerList.add(offer)

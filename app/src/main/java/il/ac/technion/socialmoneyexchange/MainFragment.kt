@@ -71,8 +71,6 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //TODO: add here - show logo for 3 seconds
-
         val currentFirebaseUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
 
         // if no user is connect
@@ -159,7 +157,7 @@ class MainFragment : Fragment() {
                 if (firstName == null) {
                     val action = MainFragmentDirections.actionMainFragmentToNewUserFragment()
                     findNavController().navigate(action)
-                    //                    return FIXME: maybe the return here is needed?
+                    //                    return // maybe the return here is needed?
                 }
 
                 // Load transactions requests IDs from DB

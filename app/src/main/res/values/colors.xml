@@ -30,4 +30,5 @@
     <color name="green">#8BC34A</color>
     <color name="red">#F44336</color>
     <color name="black">#000000</color>
+    <color name="grey">#A5A5A5</color>
 </resources>

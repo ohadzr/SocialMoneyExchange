@@ -16,7 +16,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     private fun sendRegistrationToServer(token: String?) {
-        // TODO: Implement this method to send token to your app server.
+        // TODO: Implement this method to send token to your app server. Currently done in MainFragment.kt
         Log.d("Ohad", "sendRegistrationTokenToServer $token")
     }
 }

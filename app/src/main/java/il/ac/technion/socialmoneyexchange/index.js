@@ -17,14 +17,14 @@ admin.initializeApp();
 
 // Listens for new transactions added to /transactionRequests/:randId/
 exports.findTransactionPairs = functions.database.ref('/transactionRequests/{randId}')
-    .onCreate((snapshot, context) => {
+    .onUpdate((snapshot, context) => {
       // Grab the current value of what was written to the Realtime Database.
-      const transactionData = snapshot.val();
+      const transactionData = snapshot.after.val();
       const requestedCurrency = transactionData.myCurrency;
 	  const requestedAmount = transactionData.requestedAmount;
 	  const requestedCurrencies = transactionData.requestedCurrencies;
 	  const userID = transactionData.userId;
-	  const transactionKey = snapshot.key;
+	  const transactionKey = snapshot.after.key;
 
 
       console.log('Retreived transaction data:', transactionData);
@@ -158,7 +158,7 @@ function checkIfInRadius(transactionA, transactionB) {
     console.log("radiusA:", radiusA, " radiusB:", radiusB, " distanceBetweenPoints:", distanceBetweenPoints);
 
     // if radiusA - distanceBetweenPoints > 0, then pointB is inside the radius and should return true
-    var result = ((radiusA-distanceBetweenPoints) > 0 && (radiusA-distanceBetweenPoints) > 0);
+    var result = ((radiusA-distanceBetweenPoints) > 0 && (radiusB-distanceBetweenPoints) > 0);
     if (result)
         console.log("locations are inside both radius");
     else

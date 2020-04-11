@@ -63,6 +63,6 @@
     <string name="delete_button">Delete button</string>
     <string name="app_notification_channel_id">7149</string>
     <string name="app_notification_channel_name">NewOffer</string>
-    <string name="designed_by"><![CDATA[Designed by Your Tamir Paz & Ohad Zohar]]></string>
+    <string name="designed_by"><![CDATA[Designed by Tamir Paz & Ohad Zohar]]></string>
 
 </resources>

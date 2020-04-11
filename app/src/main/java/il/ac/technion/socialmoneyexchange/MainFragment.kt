@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import com.google.firebase.iid.FirebaseInstanceId
+import kotlinx.android.synthetic.main.fragment_main.view.*
 
 
 interface TransactionsIDCallback {
@@ -49,8 +50,10 @@ class MainFragment : Fragment() {
 
 //        transactionList = mutableListOf<TransactionRequest>()
 
-        // init the RecyclerView Adapter
+        // hide the recycler view
+        binding.transactionsRecyclerView.visibility = View.GONE
 
+        // init the RecyclerView Adapter
         linearLayoutManager = LinearLayoutManager(requireContext())
         binding.transactionsRecyclerView.layoutManager = linearLayoutManager
         adapter = TransactionAdapter(requireContext())
@@ -96,8 +99,9 @@ class MainFragment : Fragment() {
         // Get IDs of transactions and then data, finally load the data into adapter
         getTranscationsIDFromDB(userRef, transactionRef)
 
-        //write push notification token to database
+        // Write push notification token to database
         writeTokenToDatabase(userRef)
+
     }
 
     private fun writeTokenToDatabase(userRef: DatabaseReference) {
@@ -138,6 +142,10 @@ class MainFragment : Fragment() {
                 // Update view using adapter
                 adapter.transactionList = transactionsList
                 adapter.transactionIDs = transactionsIDs
+
+                // hide progress bar and show transactions
+                binding.transactionsRecyclerView.visibility = View.VISIBLE
+                binding.progressBar.visibility = View.GONE
             }
 
             override fun onCancelled(error: DatabaseError) {

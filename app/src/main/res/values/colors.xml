@@ -16,14 +16,15 @@
   -->
 
 <resources>
-    <color name="colorPrimary">#6FBCFC</color>
-    <color name="colorPrimaryDark">#0288D1</color>
-    <color name="colorAccent">#0099FF</color>
+    <color name="colorPrimary">#81D4FA</color>
+    <color name="colorPrimaryDark">#4CBEF3</color>
+    <color name="colorAccent">#64B5F6</color>
 
     <color name="DarkBlue">#177DEA</color>
     <color name="LightBlue">#46CBE3</color>
 
     <color name="grey_100">#F5F5F5</color>
+    <color name="grey_200">#EBEBEB</color>
     <color name="grey_300">#E0E0E0</color>
     <color name="grey_500">#9E9E9E</color>
 

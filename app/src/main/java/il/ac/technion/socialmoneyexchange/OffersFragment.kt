@@ -36,6 +36,9 @@ class OffersFragment : Fragment() {
 
         database = FirebaseDatabase.getInstance()
 
+        // hide the recycler view
+        binding.offersRecyclerView.visibility = View.GONE
+
         // init the RecyclerView Adapter
         val context = requireContext()
         linearLayoutManager = LinearLayoutManager(context)
@@ -97,6 +100,10 @@ class OffersFragment : Fragment() {
                 // Update view using adapter
                 adapter.offersList = offerList
                 adapter.offerIDs = offerIDs
+
+                // hide progress bar and show transactions
+                binding.offersRecyclerView.visibility = View.VISIBLE
+                binding.progressBar.visibility = View.GONE
             }
 
             override fun onCancelled(error: DatabaseError) {

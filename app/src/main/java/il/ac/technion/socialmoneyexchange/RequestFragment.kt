@@ -308,7 +308,7 @@ class RequestFragment : Fragment() {
         }
         if (radius != 0.0) {
 
-            locationButton.setBackgroundColor(Color.GREEN)
+            locationButton.setBackgroundColor(Color.rgb(139, 195, 74))
             locationButton.text = "Click to change location"
 
         }

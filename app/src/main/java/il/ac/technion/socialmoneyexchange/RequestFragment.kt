@@ -72,7 +72,7 @@ class RequestFragment : Fragment() {
             savedAddedCoins = arguments!!.getFloat("savedAddedCoins")
             pickedAmount = arguments!!.getString("pickedAmount").toString()
             savedRequestedCurrencies =
-                arguments!!.getStringArrayList("savedRequestedCurrencies") as ArrayList<String>
+            arguments!!.getStringArrayList("savedRequestedCurrencies") as ArrayList<String>
             savedRequestId = arguments!!.getString("savedRequestId").toString()
 
         }
@@ -382,11 +382,18 @@ class RequestFragment : Fragment() {
                 val userTransactionRequestsRef: DatabaseReference =
                     database.getReference("users").child(userId).child("transactionRequests").push()
                 userTransactionRequestsRef.setValue(randomId)
-                Toast.makeText(
-                    requireContext(),
-                    "Successfully submitted your request",
-                    Toast.LENGTH_SHORT
-                ).show()
+                if (savedRequestId != "")
+                    Toast.makeText(
+                        requireContext(),
+                        "Successfully updated your request",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                else
+                    Toast.makeText(
+                        requireContext(),
+                        "Successfully submitted your request",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 findNavController().navigate(R.id.mainFragment)
             }
 

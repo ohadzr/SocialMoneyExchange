@@ -104,6 +104,12 @@ class OffersFragment : Fragment() {
                 // hide progress bar and show transactions
                 binding.offersRecyclerView.visibility = View.VISIBLE
                 binding.progressBar.visibility = View.GONE
+                if(offerList.size==0){
+                    binding.offersText.text = "No offers found"
+                }
+                else
+                    binding.offersText.text = "Offers"
+
             }
 
             override fun onCancelled(error: DatabaseError) {

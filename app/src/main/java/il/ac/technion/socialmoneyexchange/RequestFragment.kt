@@ -379,21 +379,23 @@ class RequestFragment : Fragment() {
                 val transactionRef: DatabaseReference =
                     database.getReference("transactionRequests").child(randomId)
                 transactionRef.setValue(newTransactionRequest)
-                val userTransactionRequestsRef: DatabaseReference =
-                    database.getReference("users").child(userId).child("transactionRequests").push()
-                userTransactionRequestsRef.setValue(randomId)
+
                 if (savedRequestId != "")
                     Toast.makeText(
                         requireContext(),
                         "Successfully updated your request",
                         Toast.LENGTH_SHORT
                     ).show()
-                else
+                else {
+                    val userTransactionRequestsRef: DatabaseReference =
+                        database.getReference("users").child(userId).child("transactionRequests").push()
+                    userTransactionRequestsRef.setValue(randomId)
                     Toast.makeText(
                         requireContext(),
                         "Successfully submitted your request",
                         Toast.LENGTH_SHORT
                     ).show()
+                }
                 findNavController().navigate(R.id.mainFragment)
             }
 

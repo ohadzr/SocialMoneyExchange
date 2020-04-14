@@ -93,7 +93,7 @@ class OfferAdapter(val context: Context) : RecyclerView.Adapter<OfferViewHolder>
 
                     // Update coin 2 value
                     holder.coin_amount2.text =
-                        String.format("%.3f", rate!! * offersList[position].coinAmount1!!)
+                        String.format("%.3f", offersList[position].coinAmount1!! / rate!!)
 
                     notUpdated = false
                 }

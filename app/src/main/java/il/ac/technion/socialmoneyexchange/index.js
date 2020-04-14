@@ -27,7 +27,7 @@ exports.findTransactionPairs = functions.database.ref('/transactionRequests/{ran
 	  const transactionKey = snapshot.after.key;
 
 
-      console.log('Retreived transaction data:', transactionData);
+      console.log('Retrieved transaction data:', transactionData);
 
       // Get a database reference
       var db = admin.database();

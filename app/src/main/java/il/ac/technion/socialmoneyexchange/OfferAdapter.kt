@@ -51,9 +51,9 @@ class OfferAdapter(val context: Context) : RecyclerView.Adapter<OfferViewHolder>
         holder.coin_amount.text = String.format("%.3f", offersList[position].coinAmount1)
         holder.status.text = offersList[position].status
         if (offersList[position].status == "CANCELLED")
-            holder.status.setTextColor(Color.RED)
+            holder.status.setTextColor(Color.rgb(244, 67, 54)) // red
         if (offersList[position].status == "CONFIRMED")
-            holder.status.setTextColor(Color.GREEN)
+            holder.status.setTextColor(Color.rgb(139, 195, 74)) // green
         holder.buttonChat.setOnClickListener() {
             val intent = Intent(context, ChatActivity::class.java)
             intent.putExtra("offerId", offerIDs[position])

@@ -28,8 +28,10 @@ class MessageAdapter(val messages: ArrayList<Message>, val itemClick: (Message) 
         fun bindForecast(message: Message) {
             itemView.messageAdapterMessageItem.text = message.text
             itemView.messageAdapterMessageItem.textSize = 16F
-            if(message.colorChoose)
+            if(message.colorChoose) {
                 itemView.messageAdapterMessageItem.setTextColor(Color.BLUE)
+                // TODO: find a way to change text direction (depend on phone rtl or ltr)
+            }
 //                itemView.setOnClickListener { itemClick(this) }
         }
     }

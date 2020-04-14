@@ -134,7 +134,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 NotificationManager.IMPORTANCE_HIGH
             )
             notificationChannel.enableLights(true)
-            notificationChannel.lightColor = Color.RED
+            notificationChannel.lightColor = Color.rgb(244, 67, 54)
             notificationChannel.enableVibration(true)
             notificationChannel.description = "We've found an offer for you!"
 

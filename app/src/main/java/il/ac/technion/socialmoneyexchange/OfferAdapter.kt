@@ -57,12 +57,19 @@ class OfferAdapter(val context: Context) : RecyclerView.Adapter<OfferViewHolder>
             holder.status.setTextColor(Color.rgb(244, 67, 54)) // red
         if (offersList[position].status == "CONFIRMED") {
             holder.status.setTextColor(Color.rgb(139, 195, 74)) // green
+        if (offersList[position].status == "PENDING")
+            holder.status.setTextColor(Color.rgb(255, 112, 67)) // orange
         }
-//        else
-//            holder.buttonRate.visibility = View.INVISIBLE
+        else
+            holder.buttonRate.visibility = View.INVISIBLE
 
 
-        checkIfVoted(holder.buttonRate,offerIDs[position],offersList[position].userID1,offersList[position].userID2)
+        checkIfVoted(
+            holder.buttonRate,
+            offerIDs[position],
+            offersList[position].userID1,
+            offersList[position].userID2
+        )
 
         if (offersList[position].status == "PENDING")
             holder.status.setTextColor(Color.rgb(255, 112, 67)) // orange
@@ -152,11 +159,17 @@ class OfferAdapter(val context: Context) : RecyclerView.Adapter<OfferViewHolder>
         }
     }
 
-    private fun checkIfVoted(buttonChat: MaterialButton?, offerId: String, userID1: String?, userID2: String?) {
+    private fun checkIfVoted(
+        buttonChat: MaterialButton?,
+        offerId: String,
+        userID1: String?,
+        userID2: String?
+    ) {
         val database = FirebaseDatabase.getInstance()
         val currentFirebaseUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
         val myUserId = currentFirebaseUser!!.uid
-        val offerRef: DatabaseReference = database.getReference("offers").child(offerId).child("vote")
+        val offerRef: DatabaseReference =
+            database.getReference("offers").child(offerId).child("vote")
         offerRef.addListenerForSingleValueEvent(object : ValueEventListener {
             // This method is triggered once when the listener is attached
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -212,7 +225,7 @@ class OfferAdapter(val context: Context) : RecyclerView.Adapter<OfferViewHolder>
                     val dbOfferId = data.getValue<String>(String::class.java)
                     if (offerId == dbOfferId) {
                         database.getReference("users").child(myUserId).child("offers")
-                            . child(data.key.toString()).removeValue()
+                            .child(data.key.toString()).removeValue()
                     }
                     break
                 }

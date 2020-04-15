@@ -8,9 +8,17 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/mainActivityRecyclerView"
-        android:layout_above="@+id/mainActivityTextContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_above="@+id/mainActivityTextContainer"
+        android:layout_margin="6dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="4dp"
+        android:layoutDirection="rtl"
+        android:gravity="start"
+        />
 
     <LinearLayout
         android:id="@+id/mainActivityTextContainer"

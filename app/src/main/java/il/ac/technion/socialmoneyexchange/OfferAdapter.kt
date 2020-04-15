@@ -59,6 +59,7 @@ class OfferAdapter(val context: Context) : RecyclerView.Adapter<OfferViewHolder>
         holder.buttonChat.setOnClickListener() {
             val intent = Intent(context, ChatActivity::class.java)
             intent.putExtra("offerId", offerIDs[position])
+            intent.putExtra("otherUser", holder.user_name_text2.text)
             context.startActivity(intent)
         }
         // check if no value was set by user. If not, load default coin rate

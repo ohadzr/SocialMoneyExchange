@@ -19,6 +19,8 @@ class ChatActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         offerId = savedInstanceState?.getString("offerId")?.toString() ?: intent.getStringExtra("offerId")
+        val otherUser = savedInstanceState?.getString("otherUser")?.toString() ?: intent.getStringExtra("otherUser")
+        setTitle("Chat with $otherUser");
         setContentView(R.layout.activity_chat)
         database = FirebaseDatabase.getInstance()
         setupSendButton()

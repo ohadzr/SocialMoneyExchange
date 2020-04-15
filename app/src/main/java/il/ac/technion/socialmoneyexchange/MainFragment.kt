@@ -55,6 +55,8 @@ class MainFragment : Fragment() {
 
         // init the RecyclerView Adapter
         linearLayoutManager = LinearLayoutManager(requireContext())
+        linearLayoutManager.reverseLayout = true
+        linearLayoutManager.stackFromEnd = true
         binding.transactionsRecyclerView.layoutManager = linearLayoutManager
         adapter = TransactionAdapter(requireContext())
         binding.transactionsRecyclerView.adapter = adapter
@@ -126,7 +128,7 @@ class MainFragment : Fragment() {
         val transactionsList = mutableListOf<TransactionRequest>()
         val transactionsIDs = mutableListOf<String>()
 
-        transactionRef.addListenerForSingleValueEvent(object : ValueEventListener {
+        transactionRef.orderByChild("timeStamp").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 for (transactionSnapshot in dataSnapshot.children) {
                     if (ids.contains(transactionSnapshot.key)) {

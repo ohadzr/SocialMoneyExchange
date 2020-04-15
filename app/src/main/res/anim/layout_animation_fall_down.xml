@@ -3,5 +3,5 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:animation="@anim/item_animation_fall_down"
     android:delay="50%"
-    android:animationOrder="normal"
+    android:animationOrder="reverse"
     />

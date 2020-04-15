@@ -97,7 +97,7 @@ class OffersFragment : Fragment() {
         //dynamically load real transactions history
         val offerList = mutableListOf<Offer>()
         val offerIDs = mutableListOf<String>()
-        offersRef.addListenerForSingleValueEvent(object : ValueEventListener {
+        offersRef.orderByChild("status").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 for (offerSnapshot in dataSnapshot.children) {
                     if (ids.contains(offerSnapshot.key)) {

@@ -64,9 +64,12 @@ class OfferAdapter(val context: Context) : RecyclerView.Adapter<OfferViewHolder>
 
         checkIfVoted(holder.buttonRate,offerIDs[position],offersList[position].userID1,offersList[position].userID2)
 
+        if (offersList[position].status == "PENDING")
+            holder.status.setTextColor(Color.rgb(255, 112, 67)) // orange
         holder.buttonChat.setOnClickListener() {
             val intent = Intent(context, ChatActivity::class.java)
             intent.putExtra("offerId", offerIDs[position])
+            intent.putExtra("otherUser", holder.user_name_text2.text)
             context.startActivity(intent)
         }
         holder.buttonRate.setOnClickListener() {
@@ -94,7 +97,7 @@ class OfferAdapter(val context: Context) : RecyclerView.Adapter<OfferViewHolder>
                     myApi.rates["EUR"] = 1.0
                     val coin1 = offersList[position].coinName1
                     val coin2 = offersList[position].coinName2
-                    rate = myApi.rates[coin1]!! / myApi.rates[coin2]!!
+                    rate = myApi.rates[coin2]!! / myApi.rates[coin1]!!
 
 
                 }
@@ -111,7 +114,7 @@ class OfferAdapter(val context: Context) : RecyclerView.Adapter<OfferViewHolder>
 
                     // Update coin 2 value
                     holder.coin_amount2.text =
-                        String.format("%.3f", offersList[position].coinAmount1!! / rate!!)
+                        String.format("%.3f", rate!! * offersList[position].coinAmount1!!)
 
                     notUpdated = false
                 }

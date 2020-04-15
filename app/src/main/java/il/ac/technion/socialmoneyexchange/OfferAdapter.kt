@@ -10,6 +10,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.offer_list_item.view.*
@@ -137,26 +139,57 @@ class OfferAdapter(val context: Context) : RecyclerView.Adapter<OfferViewHolder>
         val offerId = offerIDs[position]
         val userId1 = offersList[position].userID1
         val userId2 = offersList[position].userID2
-        database.getReference("offers").child(offerId).removeValue()
-        userId1?.let { removeOfferFromUser(it,offerId,database) }
-        userId2?.let { removeOfferFromUser(it,offerId,database) }
-
+        val currentFirebaseUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
+        val myId = currentFirebaseUser!!.uid
         offersList.removeAt(position)
         offerIDs.removeAt(position)
         notifyItemRemoved(position)
+        if (myId == userId1) {
+            removeOfferFromUser(userId1, userId2!!, offerId, database)
+        } else
+            removeOfferFromUser(userId2!!, userId1!!, offerId, database)
+
+
     }
 
-    private fun removeOfferFromUser(userId: String, offerId: String, database: FirebaseDatabase) {
-        val offersRef: DatabaseReference = database.getReference("users").child(userId).child("offers")
-        offersRef.addListenerForSingleValueEvent(object : ValueEventListener {
+    private fun removeOfferFromUser(
+        myUserId: String,
+        userId2: String,
+        offerId: String,
+        database: FirebaseDatabase
+    ) {
+        val myOffersRef: DatabaseReference =
+            database.getReference("users").child(myUserId).child("offers")
+        val otherOffersRef: DatabaseReference =
+            database.getReference("users").child(userId2).child("offers")
+        myOffersRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                for(data in dataSnapshot.children){
+                for (data in dataSnapshot.children) {
                     val dbOfferId = data.getValue<String>(String::class.java)
-                    if (offerId==dbOfferId){
-                        database.getReference("users").child(userId).child("offers").child(data.key.toString()).removeValue()
-                        break
+                    if (offerId == dbOfferId) {
+                        database.getReference("users").child(myUserId).child("offers")
+                            . child(data.key.toString()).removeValue()
                     }
+                    break
                 }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Failed to read value
+            }
+        })
+        otherOffersRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                var foundOffer = false
+                for (data in dataSnapshot.children) {
+                    val dbOfferId = data.getValue<String>(String::class.java)
+                    if (offerId == dbOfferId) {
+                        foundOffer = true
+                    }
+                    break
+                }
+                if (!foundOffer)
+                    database.getReference("offers").child(offerId).removeValue()//both users don't have it so can delete
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -165,6 +198,39 @@ class OfferAdapter(val context: Context) : RecyclerView.Adapter<OfferViewHolder>
         })
     }
 
+    //fun removeAt(position: Int) {
+//    val database = FirebaseDatabase.getInstance()
+//    val offerId = offerIDs[position]
+//    val userId1 = offersList[position].userID1
+//    val userId2 = offersList[position].userID2
+//    database.getReference("offers").child(offerId).removeValue()
+//    userId1?.let { removeOfferFromUser(it,offerId,database) }
+//    userId2?.let { removeOfferFromUser(it,offerId,database) }
+//
+//    offersList.removeAt(position)
+//    offerIDs.removeAt(position)
+//    notifyItemRemoved(position)
+//}
+//
+//    private fun removeOfferFromUser(userId: String, offerId: String, database: FirebaseDatabase) {
+//        val offersRef: DatabaseReference = database.getReference("users").child(userId).child("offers")
+//        offersRef.addListenerForSingleValueEvent(object : ValueEventListener {
+//            override fun onDataChange(dataSnapshot: DataSnapshot) {
+//                for(data in dataSnapshot.children){
+//                    println("tamir here")
+//                    val dbOfferId = data.getValue<String>(String::class.java)
+//                    if (offerId==dbOfferId){
+//                        database.getReference("users").child(userId).child("offers").child(data.key.toString()).removeValue()
+//                        break
+//                    }
+//                }
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//                // Failed to read value
+//            }
+//        })
+//    }
     override fun getItemViewType(position: Int): Int {
         return if (offersList[position].status == "CANCELLED" || offersList[position].status == "CONFIRMED")
             1

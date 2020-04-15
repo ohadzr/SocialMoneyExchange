@@ -65,6 +65,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         supportActionBar?.setDisplayShowTitleEnabled(false)
         navView.setNavigationItemSelectedListener(this)
+        if(!intent.getStringExtra("vote").isNullOrBlank()){
+            val bundle = Bundle()
+            bundle.putString("offerId",intent.getStringExtra("offerId"))
+            bundle.putString("userID1",intent.getStringExtra("userID1"))
+            bundle.putString("userID2",intent.getStringExtra("userID2"))
+            navController?.navigate(R.id.voteFragment, bundle)
+
+        }
         if(!intent.getStringExtra("fromOffer").isNullOrBlank()){
             val bundle = Bundle()
             bundle.putString("offerId",intent.getStringExtra("offerId"))
@@ -79,6 +87,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             navController?.navigate(R.id.offerFragment, bundle)
 
         }
+
+        if(!intent.getStringExtra("loadProfile").isNullOrBlank()){
+            val bundle = Bundle()
+            bundle.putString("offerId",intent.getStringExtra("offerId"))
+            bundle.putString("userID1",intent.getStringExtra("userID1"))
+            bundle.putString("userID2",intent.getStringExtra("userID2"))
+            bundle.putString("coinAmount1",intent.getStringExtra("coinAmount1"))
+            bundle.putString("coinAmount2",intent.getStringExtra("coinAmount2"))
+            bundle.putString("coinName1",intent.getStringExtra("coinName1"))
+            bundle.putString("coinName2",intent.getStringExtra("coinName2"))
+            bundle.putString("lastUpdater",intent.getStringExtra("lastUpdater"))
+            bundle.putString("status",intent.getStringExtra("status"))
+            navController?.navigate(R.id.userProfilePublicFragment, bundle)
+
+        }
+
         if(!intent.getStringExtra("fromMap").isNullOrEmpty()||!intent.getStringExtra("fromEdit").isNullOrEmpty()) {
             val bundle = Bundle()
             bundle.putString("fromMapOrEdit","true")

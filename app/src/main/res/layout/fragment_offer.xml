@@ -16,8 +16,8 @@
 
             <ImageView
                 android:id="@+id/user_img_public"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="16dp"
                 android:background="@color/colorAccent"
@@ -32,8 +32,8 @@
 
             <ImageView
                 android:id="@+id/user_img_public2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="16dp"
                 android:background="@color/colorAccent"
@@ -77,15 +77,17 @@
             </TextView>
 
             <RatingBar
-                android:id="@+id/rating_bar"
+                android:id="@+id/rating_bar1"
                 style="?android:attr/ratingBarStyleIndicator"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
+                android:layout_marginStart="8dp"
                 android:isIndicator="true"
                 android:numStars="5"
-                android:rating="3.5"
                 android:stepSize="0.1"
+                android:scaleX=".9"
+                android:scaleY=".9"
                 android:theme="@style/Widget.AppCompat.RatingBar"
                 app:layout_constraintEnd_toStartOf="@+id/rating_bar2"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -99,13 +101,14 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 android:isIndicator="true"
+                android:scaleX=".9"
+                android:scaleY=".9"
                 android:numStars="5"
-                android:rating="3.5"
                 android:stepSize="0.1"
                 android:theme="@style/Widget.AppCompat.RatingBar"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/rating_bar"
+                app:layout_constraintStart_toEndOf="@+id/rating_bar1"
                 app:layout_constraintTop_toBottomOf="@+id/name_text2" />
 
             <TextView
@@ -118,7 +121,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/coin_name_text2"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/rating_bar"
+                app:layout_constraintTop_toBottomOf="@+id/rating_bar1"
                 tools:hint="@string/coin_name">
 
             </TextView>

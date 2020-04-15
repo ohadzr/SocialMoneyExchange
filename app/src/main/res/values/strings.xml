@@ -65,4 +65,8 @@
     <string name="app_notification_channel_name">NewOffer</string>
     <string name="designed_by"><![CDATA[Designed by Tamir Paz & Ohad Zohar]]></string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="vote">vote</string>
+
 </resources>

@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
@@ -54,11 +55,26 @@ class OfferAdapter(val context: Context) : RecyclerView.Adapter<OfferViewHolder>
         holder.status.text = offersList[position].status
         if (offersList[position].status == "CANCELLED")
             holder.status.setTextColor(Color.rgb(244, 67, 54)) // red
-        if (offersList[position].status == "CONFIRMED")
+        if (offersList[position].status == "CONFIRMED") {
             holder.status.setTextColor(Color.rgb(139, 195, 74)) // green
+        }
+//        else
+//            holder.buttonRate.visibility = View.INVISIBLE
+
+
+        checkIfVoted(holder.buttonRate,offerIDs[position],offersList[position].userID1,offersList[position].userID2)
+
         holder.buttonChat.setOnClickListener() {
             val intent = Intent(context, ChatActivity::class.java)
             intent.putExtra("offerId", offerIDs[position])
+            context.startActivity(intent)
+        }
+        holder.buttonRate.setOnClickListener() {
+            val intent = Intent(context, MainActivity::class.java)
+            intent.putExtra("vote", "true")
+            intent.putExtra("offerId", offerIDs[position])
+            intent.putExtra("userID1", offersList[position].userID1)
+            intent.putExtra("userID2", offersList[position].userID2)
             context.startActivity(intent)
         }
         // check if no value was set by user. If not, load default coin rate
@@ -133,6 +149,31 @@ class OfferAdapter(val context: Context) : RecyclerView.Adapter<OfferViewHolder>
         }
     }
 
+    private fun checkIfVoted(buttonChat: MaterialButton?, offerId: String, userID1: String?, userID2: String?) {
+        val database = FirebaseDatabase.getInstance()
+        val currentFirebaseUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
+        val myUserId = currentFirebaseUser!!.uid
+        val offerRef: DatabaseReference = database.getReference("offers").child(offerId).child("vote")
+        offerRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            // This method is triggered once when the listener is attached
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+
+                val voted = dataSnapshot.child(myUserId).getValue(String::class.java)
+                if (!voted.isNullOrEmpty()) {
+                    buttonChat!!.text = "Voted"
+                    buttonChat!!.isEnabled = false
+                }
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Failed to read value
+            }
+        })
+
+
+    }
+
 
     fun removeAt(position: Int) {
         val database = FirebaseDatabase.getInstance()
@@ -198,39 +239,6 @@ class OfferAdapter(val context: Context) : RecyclerView.Adapter<OfferViewHolder>
         })
     }
 
-    //fun removeAt(position: Int) {
-//    val database = FirebaseDatabase.getInstance()
-//    val offerId = offerIDs[position]
-//    val userId1 = offersList[position].userID1
-//    val userId2 = offersList[position].userID2
-//    database.getReference("offers").child(offerId).removeValue()
-//    userId1?.let { removeOfferFromUser(it,offerId,database) }
-//    userId2?.let { removeOfferFromUser(it,offerId,database) }
-//
-//    offersList.removeAt(position)
-//    offerIDs.removeAt(position)
-//    notifyItemRemoved(position)
-//}
-//
-//    private fun removeOfferFromUser(userId: String, offerId: String, database: FirebaseDatabase) {
-//        val offersRef: DatabaseReference = database.getReference("users").child(userId).child("offers")
-//        offersRef.addListenerForSingleValueEvent(object : ValueEventListener {
-//            override fun onDataChange(dataSnapshot: DataSnapshot) {
-//                for(data in dataSnapshot.children){
-//                    println("tamir here")
-//                    val dbOfferId = data.getValue<String>(String::class.java)
-//                    if (offerId==dbOfferId){
-//                        database.getReference("users").child(userId).child("offers").child(data.key.toString()).removeValue()
-//                        break
-//                    }
-//                }
-//            }
-//
-//            override fun onCancelled(error: DatabaseError) {
-//                // Failed to read value
-//            }
-//        })
-//    }
     override fun getItemViewType(position: Int): Int {
         return if (offersList[position].status == "CANCELLED" || offersList[position].status == "CONFIRMED")
             1
@@ -259,11 +267,6 @@ class OfferAdapter(val context: Context) : RecyclerView.Adapter<OfferViewHolder>
         })
     }
 
-//    fun updateItems(newListOfItems: MutableList<Offer>) {
-//        offersList.clear()
-//        offersList.addAll(newListOfItems)
-//        this.notifyDataSetChanged()
-//    }
 }
 
 
@@ -278,4 +281,5 @@ class OfferViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val rate = view.rate
     val status = view.status
     val buttonChat = view.chat_button
+    val buttonRate = view.rate_button
 }

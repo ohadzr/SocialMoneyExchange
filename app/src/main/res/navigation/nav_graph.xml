@@ -59,5 +59,10 @@
         android:name="il.ac.technion.socialmoneyexchange.OffersFragment"
         android:label="fragment_offers"
         tools:layout="@layout/fragment_offers" />
+    <fragment
+        android:id="@+id/voteFragment"
+        android:name="il.ac.technion.socialmoneyexchange.VoteFragment"
+        android:label="fragment_vote"
+        tools:layout="@layout/fragment_vote" />
     <!--        android:label="fragment_about"-->
 </navigation>

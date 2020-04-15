@@ -39,7 +39,7 @@
                 android:isIndicator="true"
                 android:numStars="5"
                 android:stepSize="0.1"
-                android:rating="3.5"
+                android:rating="0"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/user_img_public" />
@@ -89,6 +89,15 @@
 
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:visibility="visible"
+                    android:scaleX="0.60"
+                    android:scaleY="0.60"
+                    android:textColor="@color/colorAccent"
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:layout_gravity="center"/>
             </FrameLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

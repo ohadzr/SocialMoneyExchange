@@ -1,5 +1,6 @@
 package il.ac.technion.socialmoneyexchange
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,14 +10,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import com.google.gson.GsonBuilder
+import kotlinx.android.synthetic.main.fragment_offer.view.*
+import kotlinx.android.synthetic.main.fragment_user_profile_public.view.*
+import kotlinx.android.synthetic.main.fragment_user_profile_public.view.name_text
+import kotlinx.android.synthetic.main.fragment_user_profile_public.view.user_img_public
 import okhttp3.*
 import java.io.IOException
 
@@ -80,7 +88,6 @@ class OfferFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_offer, container, false)
-
         database = FirebaseDatabase.getInstance()
         val currentFirebaseUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
         val userId = currentFirebaseUser!!.uid
@@ -90,6 +97,7 @@ class OfferFragment : Fragment() {
         val client = OkHttpClient()
         var myApi: CurrencyApi
         var originalRate: Float? = null
+        loadUsersData(userID1,userID2,view)
 
         requireActivity()
             .onBackPressedDispatcher
@@ -118,13 +126,7 @@ class OfferFragment : Fragment() {
             }
         })
 
-//        val originalRate = coinAmount1.toFloat() / coinAmount2.toFloat()
 
-        val offersRef: DatabaseReference = database.getReference("offers").child(offerId)
-        val userOfferRef: DatabaseReference =
-            database.getReference("users").child(userId).child("offers")
-//        offersRef.setValue(Offer("ohad",coinName1, coinAmount1.toFloat(), "tamir",coinName2, coinAmount2.toFloat(),"ACTIVE"))
-//        userOfferRef.setValue(offerID)
 
         val coinName1TextView: TextView = view.findViewById(R.id.coin_name_text) as TextView
         val coinName2TextView: TextView = view.findViewById(R.id.coin_name_text2) as TextView
@@ -134,7 +136,14 @@ class OfferFragment : Fragment() {
         val resetButton = view.findViewById(R.id.reset_button) as Button
         val saveButton = view.findViewById(R.id.accept_button) as Button
         val declineButton = view.findViewById(R.id.decline_button) as Button
-
+        if(userId == userID1) {
+            setImgClickable(view.user_img_public2)
+            setTxtlickable(view.name_text2)
+        }
+        else {
+            setImgClickable(view.user_img_public)
+            setTxtlickable(view.name_text)
+        }
         // Load original data to text boxes for the first time
         resetTextValues(
             coinName1, coinAmount1, coinName2, coinAmount2,
@@ -213,6 +222,84 @@ class OfferFragment : Fragment() {
 
         return view
     }
+
+    private fun setTxtlickable(nameText: TextView?) {
+        nameText?.setOnClickListener{
+            val intent = Intent(context, MainActivity::class.java)
+            intent.putExtra("loadProfile", "true")
+            intent.putExtra("offerId", offerId)
+            intent.putExtra("userID1", userID1)
+            intent.putExtra("userID2", userID2)
+            intent.putExtra("coinAmount1", coinAmount1)
+            intent.putExtra("coinName1", coinName1)
+            intent.putExtra("coinName2", coinName2)
+            intent.putExtra("lastUpdater", lastUpdater)
+            intent.putExtra("status", status)
+            intent.putExtra("coinAmount2", coinAmount2)
+            startActivity(intent)
+        }
+    }
+
+    private fun setImgClickable(userImgPublic: ImageView?) {
+        userImgPublic?.setOnClickListener{
+            val intent = Intent(context, MainActivity::class.java)
+            intent.putExtra("loadProfile", "true")
+            intent.putExtra("offerId", offerId)
+            intent.putExtra("userID1", userID1)
+            intent.putExtra("userID2", userID2)
+            intent.putExtra("coinAmount1", coinAmount1)
+            intent.putExtra("coinName1", coinName1)
+            intent.putExtra("coinName2", coinName2)
+            intent.putExtra("lastUpdater", lastUpdater)
+            intent.putExtra("status", status)
+            intent.putExtra("coinAmount2", coinAmount2)
+            startActivity(intent)
+
+        }
+    }
+
+    private fun loadUsersData(userID1: String, userID2: String,view: View) {
+
+        val database = FirebaseDatabase.getInstance()
+        val user1Ref: DatabaseReference = database.getReference("users").child(userID1)
+        val user2Ref: DatabaseReference = database.getReference("users").child(userID2)
+
+        user1Ref.addListenerForSingleValueEvent(object : ValueEventListener {
+            // This method is triggered once when the listener is attached
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // first, check if user first name exists
+                val firstName = dataSnapshot.child("firstName").getValue(String::class.java)
+                val lastName = dataSnapshot.child("lastName").getValue(String::class.java)
+                val imgUrl = dataSnapshot.child("imgUrl").getValue(String::class.java)
+                view.name_text.text = "$firstName $lastName"
+                view.rating_bar1.rating =
+                    dataSnapshot.child("rate").getValue(String::class.java)?.toFloat() ?:0F
+                bindImage(view.user_img_public,imgUrl )
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Failed to read value
+            }
+        })
+        user2Ref.addListenerForSingleValueEvent(object : ValueEventListener {
+            // This method is triggered once when the listener is attached
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // first, check if user first name exists
+                val firstName = dataSnapshot.child("firstName").getValue(String::class.java)
+                val lastName = dataSnapshot.child("lastName").getValue(String::class.java)
+                val imgUrl = dataSnapshot.child("imgUrl").getValue(String::class.java)
+                view.name_text2.text = "$firstName $lastName"
+                view.rating_bar2.rating =
+                    dataSnapshot.child("rate").getValue(String::class.java)?.toFloat() ?:0F
+                bindImage(view.user_img_public2,imgUrl)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Failed to read value
+            }
+        })
+    }
+
 
     private fun saveOrCancelOffer(
         database: FirebaseDatabase, userId: String,
@@ -315,6 +402,14 @@ class OfferFragment : Fragment() {
 
         rateTextView.text = newText
 
+    }
+    private fun bindImage(imgView: ImageView, imgUrl: String?) {
+        imgUrl?.let {
+            val imgUri = imgUrl.toUri().buildUpon().scheme("https").build()
+            Glide.with(imgView.context)
+                .load(imgUri)
+                .into(imgView)
+        }
     }
 
 

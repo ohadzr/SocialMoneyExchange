@@ -109,7 +109,7 @@ class OfferFragment : Fragment() {
 
                 myApi = gson.fromJson(body, CurrencyApi::class.java)
                 myApi.rates["EUR"] = 1.0
-                originalRate = (myApi.rates[coinName1]!! / myApi.rates[coinName2]!!).toFloat()
+                originalRate = (myApi.rates[coinName2]!! / myApi.rates[coinName1]!!).toFloat()
 
             }
 
@@ -311,7 +311,7 @@ class OfferFragment : Fragment() {
         Log.d("Ohad", "newRate: " + newRate.toString())
         var newText = "%.3f".format(newRate)
         if (newRate != originalRate && originalRate != null)
-            newText = "Offer rate: %.3f    Suggested rate: %.3f".format(newRate, originalRate)
+            newText = "Offer rate:  1 : %.3f      Suggested rate:  1 : %.3f".format(newRate, originalRate)
 
         rateTextView.text = newText
 

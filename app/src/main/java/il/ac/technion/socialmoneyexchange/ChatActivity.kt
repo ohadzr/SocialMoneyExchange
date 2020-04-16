@@ -16,11 +16,12 @@ import kotlinx.android.synthetic.main.activity_chat.*
 class ChatActivity : AppCompatActivity() {
     private lateinit var database: FirebaseDatabase
     private lateinit var offerId: String
+    private lateinit var otherUser: String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         offerId = savedInstanceState?.getString("offerId")?.toString() ?: intent.getStringExtra("offerId")
-        val otherUser = savedInstanceState?.getString("otherUser")?.toString() ?: intent.getStringExtra("otherUser")
-        setTitle("Chat with $otherUser");
+        otherUser = savedInstanceState?.getString("otherUser")?.toString() ?: intent.getStringExtra("otherUser")
+        title = "Chat with $otherUser"
         setContentView(R.layout.activity_chat)
         database = FirebaseDatabase.getInstance()
         setupSendButton()
@@ -57,6 +58,8 @@ class ChatActivity : AppCompatActivity() {
         mainActivityEditText.setText("")
     }
     private fun createFirebaseListener(){
+        val currentFirebaseUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
+        val userId = currentFirebaseUser!!.uid
         val postListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 var firstId = ""
@@ -67,11 +70,8 @@ class ChatActivity : AppCompatActivity() {
 
                     //unwrap
                     val message = messageData?.let { it } ?: continue
-                    if(firstId == ""){
-                        firstId = message.userID.toString()
-                    }
-                    if(message.userID.toString().equals(firstId))
-                        message.setColorChoose()
+
+                    message.currentUser = message.userID.toString() == userId
                     toReturn.add(message)
                 }
 

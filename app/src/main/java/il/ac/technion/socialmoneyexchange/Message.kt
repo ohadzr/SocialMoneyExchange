@@ -10,9 +10,6 @@ class Message {
     var text: String? = null
     var timestamp: Long = System.currentTimeMillis()
     var userID: String? = null
-    var colorChoose : Boolean = true
+    var currentUser: Boolean? = null
 
-    fun setColorChoose(){
-        colorChoose = false
-    }
 }

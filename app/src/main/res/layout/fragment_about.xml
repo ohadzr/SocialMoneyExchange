@@ -61,12 +61,36 @@
             android:layout_height="80dp"
             android:layout_margin="30dp"
             android:contentDescription="@string/logo_image"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/technion_image"
             app:srcCompat="@drawable/faculty_logo_en"
             tools:src="@drawable/faculty_logo_en" />
+        <TextView
+            android:id="@+id/debug_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="30dp"
+            android:fontFamily="@font/arimo_bold"
+            android:padding="6dp"
+            android:text="Found a bug?\nPlease press to sumbit"
+            android:textAlignment="textStart"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/faculty_image"/>
+        <ImageView
+            android:id="@+id/debug_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:contentDescription="@string/logo_image"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/debug_text"
+            app:srcCompat="@drawable/ic_launcher"
+            tools:src="@drawable/ic_launcher" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

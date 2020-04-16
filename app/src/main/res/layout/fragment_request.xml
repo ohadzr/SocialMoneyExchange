@@ -23,6 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
+            android:textAlignment="textStart"
             android:layout_alignParentTop="true"
             android:layout_marginStart="12dp"
             android:layout_marginTop="12dp"
@@ -37,6 +38,7 @@
             android:id="@+id/receiving_info"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
+            android:textAlignment="textStart"
             android:layout_marginTop="150dp"
             android:text="Please choose what currencies you want to receive"
             android:textSize="20sp">

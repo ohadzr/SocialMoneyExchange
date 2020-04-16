@@ -75,8 +75,13 @@ class OfferAdapter(val context: Context) : RecyclerView.Adapter<OfferViewHolder>
             holder.status.setTextColor(Color.rgb(255, 112, 67)) // orange
         holder.buttonChat.setOnClickListener() {
             val intent = Intent(context, ChatActivity::class.java)
+            val currentFirebaseUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
+            val myUserId = currentFirebaseUser!!.uid
+            if (myUserId == offersList[position].userID1)
+                intent.putExtra("otherUser", holder.user_name_text2.text)
+            else
+                intent.putExtra("otherUser", holder.user_name_text.text)
             intent.putExtra("offerId", offerIDs[position])
-            intent.putExtra("otherUser", holder.user_name_text2.text)
             context.startActivity(intent)
         }
         holder.buttonRate.setOnClickListener() {

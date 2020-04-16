@@ -31,18 +31,16 @@ class MessageAdapter(
 
     class ViewHolder(view: View, val itemClick: (Message) -> Unit) : RecyclerView.ViewHolder(view) {
 
-        @SuppressLint("WrongConstant")
         fun bindForecast(message: Message) {
+            println("tamir here")
             if(message.currentUser!!) {
-                itemView.messageAdapterMessageItem.setTextColor(Color.rgb(8, 17, 99))
-//                itemView.messageAdapterMessageItem.setBackgroundResource(R.drawable.rounded_corner_mine)
-
-
+                itemView.messageAdapterMessageItem.setTextColor(Color.rgb(9, 20, 115))
             }
             else {
 //                itemView.messageAdapterMessageItem.setBackgroundResource(R.drawable.rounded_corner_other)
-                itemView.messageAdapterMessageItem.gravity = Gravity.END            }
-//            itemView.messageAdapterMessageItem.text = " "+message.text+" "
+                itemView.messageAdapterMessageItem.gravity = Gravity.END
+            }
+            itemView.messageAdapterMessageItem.text = message.text
         }
     }
 }

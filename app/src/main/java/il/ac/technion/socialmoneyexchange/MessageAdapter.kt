@@ -3,18 +3,11 @@ package il.ac.technion.socialmoneyexchange
 
 import android.annotation.SuppressLint
 import android.graphics.Color
-import android.text.Layout
 import android.view.Gravity
-
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import androidx.constraintlayout.solver.widgets.ConstraintWidget
-import androidx.core.view.setMargins
-import androidx.core.view.setPadding
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.internal.ViewUtils.dpToPx
 import kotlinx.android.synthetic.main.message_item.view.*
 
 class MessageAdapter(
@@ -41,7 +34,7 @@ class MessageAdapter(
         @SuppressLint("WrongConstant")
         fun bindForecast(message: Message) {
             if(message.currentUser!!) {
-                itemView.messageAdapterMessageItem.setTextColor(Color.rgb(0,204,255))
+                itemView.messageAdapterMessageItem.setTextColor(Color.rgb(8, 17, 99))
 //                itemView.messageAdapterMessageItem.setBackgroundResource(R.drawable.rounded_corner_mine)
 
 

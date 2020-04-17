@@ -153,19 +153,20 @@ exports.findTransactionPairs = functions.database.ref('/transactionRequests/{ran
 // This function cancel an offer. If the offer got already cancelled it will be deleted completely from DB
 // return a Promise
 function cancelOffer(offerID, db, delete_flag) {
-    var return_promise = db.ref("offers/").child(offerID).once("value")
-        .then(function (snapshot) {
+    console.log("OFFERID", offerID);
+    var return_promise = db.ref("offers/").child(offerID).once("value", function (snapshot) {
             var offersRef = db.ref("offers/").child(offerID);
             var offer = snapshot.val();
             var promise;
-            
+            console.log("OFFER",offer);
+
             // if status is already CANCELLED and the delete flag is true - delete offer
             if (offer.status === "CANCELLED" && delete_flag) {
-                promise = offersRef.remove()
+                promise = offersRef.remove();
                 console.log("Offer got deleted from DB. offer ID:", offerID);
             }
             // otherwise, changing the offer status to CANCELLED
-            else {
+            else if (offer.status !== "CONFIRMED" && offer.status !== "CANCELLED"){
                 promise = offersRef.update({
                     status: "CANCELLED"
                 });
@@ -184,10 +185,12 @@ function cancelOffer(offerID, db, delete_flag) {
 // The function return all the promises for cancelling
 function cancelOffersExceptKeepList(offerIDs, offerIDsToKeep, db) {
     var promises = [];
-    for (const [index, offerID] of offerIDs.entries()) {
+    console.log("Orders to keep:", offerIDsToKeep);
+    for(var i = 0; i < offerIDs.length; i++) {
         // if index is not in "to keep" list, cancel offer
-        if (!offerIDsToKeep.includes(index)) {
-            promises.push(cancelOffer(offerID, db, false));
+        if (!offerIDsToKeep.includes(offerIDs[i])) {
+            console.log("keeping offer:", offerIDs[i]);
+            promises.push(cancelOffer(offerIDs[i], db, false));
         }
     }
     return promises;
@@ -198,12 +201,12 @@ function cancelOffersExceptKeepList(offerIDs, offerIDsToKeep, db) {
 // return -1 if not found
 function findOfferIndex(offerValues, transactionID) {
     for (const [index, offer] of offerValues.entries()) {
-        if (transactionID === offer.userID1 || transactionID === offer.userID2){
+        if ((transactionID === offer.transactionID1 || transactionID === offer.transactionID2) && offer.status !== "CANCELLED" && offer.status !== "CONFIRMED"){
             console.log("offer already exists. Index:", index);
             return index;
         }
     }
-    console.log("offer does not exists. Should create new one", index);
+    console.log("offer does not exists. Should create new one");
     return -1;
 }
 
@@ -223,7 +226,7 @@ function getAllOffersFromTransaction(transactionKey, db, mainSnapshot) {
                 //check if transaction ID in offer transactions ID
                 if ((transactionKey === offer.transactionID1) || (transactionKey === offer.transactionID2)) {
                     offerKeys.push(offerID);
-                    offerValues.push(offerID);
+                    offerValues.push(offer);
                 }
 
             });
@@ -250,7 +253,7 @@ function updateOffer(offerIDs, offerValues, db, mainSnapshot) {
     const userID = transactionData.userId;
 
 
-    console.log("Queried all relevant offers from DB:", offerIDs);
+    console.log("Update event - Queried all relevant offers from DB:", offerIDs);
 
     returned_promises = db.ref("transactionRequests/").once("value")
         .then(function (snapshot) {
@@ -327,7 +330,7 @@ function addNewOfferToDatabase(requestedAmount, requestedCurrency, myCurrency, u
     secondUserRef = usersRef.child(userID2).child("offers").push(offerRef.key);
     promises.push(secondUserRef.once('value'));
 
-    console.log("Offer ID (key) added to users");
+    console.log("Offer ID added to users");
 
     return promises;
 }

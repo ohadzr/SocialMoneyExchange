@@ -1,7 +1,6 @@
 package il.ac.technion.socialmoneyexchange
 
 
-import android.annotation.SuppressLint
 import android.graphics.Color
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -32,7 +31,6 @@ class MessageAdapter(
     class ViewHolder(view: View, val itemClick: (Message) -> Unit) : RecyclerView.ViewHolder(view) {
 
         fun bindForecast(message: Message) {
-            println("tamir here")
             if(message.currentUser!!) {
                 itemView.messageAdapterMessageItem.setTextColor(Color.rgb(9, 20, 115))
             }

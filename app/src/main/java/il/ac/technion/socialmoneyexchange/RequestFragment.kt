@@ -72,7 +72,7 @@ class RequestFragment : Fragment() {
             savedAddedCoins = arguments!!.getFloat("savedAddedCoins")
             pickedAmount = arguments!!.getString("pickedAmount").toString()
             savedRequestedCurrencies =
-            arguments!!.getStringArrayList("savedRequestedCurrencies") as ArrayList<String>
+                arguments!!.getStringArrayList("savedRequestedCurrencies") as ArrayList<String>
             savedRequestId = arguments!!.getString("savedRequestId").toString()
 
         }
@@ -139,7 +139,7 @@ class RequestFragment : Fragment() {
                         ) {
                             myCurrency = coinList[position]
                             updateAmount(
-                                pickedAmount.toInt(),
+                                pickedAmount,
                                 myCurrency,
                                 requestedCurrencies,
                                 inputTextList,
@@ -160,14 +160,14 @@ class RequestFragment : Fragment() {
                 inputTextParam.topMargin = inputTextTopDist
                 inputTextParam.marginStart = inputTextEdgeDist
                 inputText.layoutParams = inputTextParam
-                inputText.hint = "Insert amount"
+                inputText.hint = "Insert here"
                 inputText.inputType = InputType.TYPE_CLASS_NUMBER
                 inputText.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(MAX_MONEY_DIGITS))
                 inputText.setText(pickedAmount)
                 inputText.setOnClickListener { v ->
                     pickedAmount = inputText.text.toString()
                     updateAmount(
-                        pickedAmount.toInt(),
+                        pickedAmount,
                         myCurrency,
                         requestedCurrencies,
                         inputTextList,
@@ -214,7 +214,7 @@ class RequestFragment : Fragment() {
                 myAddedCoins++
                 myButtonAdd.setOnClickListener {
                     updateAmount(
-                        pickedAmount.toInt(),
+                        pickedAmount,
                         myCurrency,
                         requestedCurrencies,
                         inputTextList,
@@ -388,7 +388,8 @@ class RequestFragment : Fragment() {
                     ).show()
                 else {
                     val userTransactionRequestsRef: DatabaseReference =
-                        database.getReference("users").child(userId).child("transactionRequests").push()
+                        database.getReference("users").child(userId).child("transactionRequests")
+                            .push()
                     userTransactionRequestsRef.setValue(randomId)
                     Toast.makeText(
                         requireContext(),
@@ -407,49 +408,53 @@ class RequestFragment : Fragment() {
 
     // This function convert a coin name ("CAD") to name and country ("CAD - Canadian Dollar")
     // get a list and return a list
-    private fun convertCoinName(coinList: List<String>, reverse : Boolean = false): ArrayList<String> {
-        val newCoinList : ArrayList<String> = arrayListOf()
+    private fun convertCoinName(
+        coinList: List<String>,
+        reverse: Boolean = false
+    ): ArrayList<String> {
+        val newCoinList: ArrayList<String> = arrayListOf()
 
-        val coinMap = mapOf("CAD" to "CAD - Canadian Dollar",
-        "HKD" to "HKD - Hong Kong Dollar",
-        "ISK" to "ISK - Icelandic Króna",
-        "PHP" to "PHP - Philippine Peso",
-        "DKK" to "DKK - Danish Krone",
-        "HUF" to "HUF - Hungarian Forint",
-        "CZK" to "CZK - Czech Koruna",
-        "AUD" to "AUD - Australian Dollar",
-        "RON" to "RON - Romanian Leu",
-        "SEK" to "SEK - Swedish Krona",
-        "IDR" to "IDR - Indonesian Rupiah",
-        "INR" to "INR - Indian Rupee",
-        "BRL" to "BRL - Brazilian Real",
-        "RUB" to "RUB - Russian Ruble",
-        "HRK" to "HRK - Croatian Kuna",
-        "JPY" to "JPY - Japanese Yen",
-        "THB" to "THB - Thai Baht",
-        "CHF" to "CHF - Swiss Franc",
-        "SGD" to "SGD - Singapore Dollar",
-        "PLN" to "PLN - Poland Złoty",
-        "BGN" to "BGN - Bulgarian Lev",
-        "TRY" to "TRY - Turkish Lira",
-        "CNY" to "CNY - Chinese Yuan",
-        "NOK" to "NOK - Norwegian Krone",
-        "NZD" to "NZD - New Zealand Dollar",
-        "ZAR" to "ZAR - South African Rand",
-        "USD" to "USD - United States Dollar",
-        "MXN" to "MXN - Mexican Peso",
-        "ILS" to "ILS - Israeli Shekel",
-        "GBP" to "GBP - Pound Sterling",
-        "KRW" to "KRW - South Korean Won",
-        "MYR" to "MYR - Malaysian Ringgit",
-        "EUR" to "EUR - European Union Euro"
+        val coinMap = mapOf(
+            "CAD" to "CAD - Canadian Dollar",
+            "HKD" to "HKD - Hong Kong Dollar",
+            "ISK" to "ISK - Icelandic Króna",
+            "PHP" to "PHP - Philippine Peso",
+            "DKK" to "DKK - Danish Krone",
+            "HUF" to "HUF - Hungarian Forint",
+            "CZK" to "CZK - Czech Koruna",
+            "AUD" to "AUD - Australian Dollar",
+            "RON" to "RON - Romanian Leu",
+            "SEK" to "SEK - Swedish Krona",
+            "IDR" to "IDR - Indonesian Rupiah",
+            "INR" to "INR - Indian Rupee",
+            "BRL" to "BRL - Brazilian Real",
+            "RUB" to "RUB - Russian Ruble",
+            "HRK" to "HRK - Croatian Kuna",
+            "JPY" to "JPY - Japanese Yen",
+            "THB" to "THB - Thai Baht",
+            "CHF" to "CHF - Swiss Franc",
+            "SGD" to "SGD - Singapore Dollar",
+            "PLN" to "PLN - Poland Złoty",
+            "BGN" to "BGN - Bulgarian Lev",
+            "TRY" to "TRY - Turkish Lira",
+            "CNY" to "CNY - Chinese Yuan",
+            "NOK" to "NOK - Norwegian Krone",
+            "NZD" to "NZD - New Zealand Dollar",
+            "ZAR" to "ZAR - South African Rand",
+            "USD" to "USD - United States Dollar",
+            "MXN" to "MXN - Mexican Peso",
+            "ILS" to "ILS - Israeli Shekel",
+            "GBP" to "GBP - Pound Sterling",
+            "KRW" to "KRW - South Korean Won",
+            "MYR" to "MYR - Malaysian Ringgit",
+            "EUR" to "EUR - European Union Euro"
         )
 
         // convert European Union Euro to EUR
         if (reverse) {
             for (coinName in coinList) {
                 if (coinName.length > 3)
-                    newCoinList.add(coinName.substring(0,3))
+                    newCoinList.add(coinName.substring(0, 3))
             }
         }
 
@@ -499,7 +504,7 @@ class RequestFragment : Fragment() {
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
             val amountTextParam = amountText.layoutParams as RelativeLayout.LayoutParams
-            val amountTextEdgeDist = dpToPx(requireContext(), 230).toInt()
+            val amountTextEdgeDist = dpToPx(requireContext(), 240).toInt()
             val amountTextTopDist = dpToPx(requireContext(), 274 + 30 * addedCoins.toInt()).toInt()
             amountTextParam.topMargin = amountTextTopDist
             amountTextParam.marginStart = amountTextEdgeDist
@@ -543,7 +548,7 @@ class RequestFragment : Fragment() {
                         val tempString = coinList[position]
                         requestedCurrencies[addedCoins.toInt()] = tempString
                         updateAmount(
-                            pickedAmount.toInt(),
+                            pickedAmount,
                             myCurrency,
                             requestedCurrencies,
                             inputTextList,
@@ -575,20 +580,23 @@ class RequestFragment : Fragment() {
     }
 
     fun updateAmount(
-        requestedAmount: Int,
+        requestedAmount: String,
         myCurrency: String,
         requestedCurrencies: ArrayList<String>,
         inputTextList: ArrayList<MaterialTextView>,
         addedCoins: Float
     ) {
         val myRate: Double
-        if (myApi.rates[myCurrency] != null) {
-            myRate =
-                myApi.rates[myCurrency]!!
-            for (i in 0 until inputTextList.size) {
-                val requestedCurrencyAmount =
-                    (myApi.rates[requestedCurrencies[i]]!! / myRate) * requestedAmount.toDouble()
-                inputTextList[i].text = "%.3f".format(requestedCurrencyAmount.toFloat())
+        if (myCurrency != null && myCurrency != ""&& requestedAmount!="") {
+            if (myApi.rates[myCurrency.substring(0, 3)] != null) {
+                myRate = myApi.rates[myCurrency.substring(0, 3)]!!
+                for (i in 0 until requestedCurrencies.size) {
+                    if (requestedCurrencies[i] != "") {
+                        val requestedCurrencyAmount =
+                            (myApi.rates[requestedCurrencies[i].substring(0, 3)]!! / myRate) * requestedAmount.toDouble()
+                        inputTextList[i].text = "%.3f".format(requestedCurrencyAmount.toFloat())
+                    }
+                }
             }
         }
 

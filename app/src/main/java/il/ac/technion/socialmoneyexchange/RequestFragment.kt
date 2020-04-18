@@ -25,7 +25,6 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.gson.GsonBuilder
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
-import kotlinx.android.synthetic.main.fragment_request.*
 import okhttp3.*
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -110,7 +109,7 @@ class RequestFragment : Fragment() {
                 } else {
                     requestedCurrencies = savedRequestedCurrencies
                 }
-                coinList.addAll(myApi.rates.keys.toList())
+                coinList.addAll(convertCoinName(myApi.rates.keys.toList()))
                 //first spinner - giving currency
                 val spinner = SearchableSpinner(requireContext())
                 spinner.layoutParams = RelativeLayout.LayoutParams(
@@ -155,7 +154,7 @@ class RequestFragment : Fragment() {
                     ViewGroup.LayoutParams.WRAP_CONTENT
                 )
                 val inputTextParam = inputText.layoutParams as RelativeLayout.LayoutParams
-                val inputTextEdgeDist = dpToPx(requireContext(), 130).toInt()
+                val inputTextEdgeDist = dpToPx(requireContext(), 230).toInt()
                 val inputTextTopDist = dpToPx(requireContext(), 70).toInt()
                 inputTextParam.topMargin = inputTextTopDist
                 inputTextParam.marginStart = inputTextEdgeDist
@@ -405,6 +404,56 @@ class RequestFragment : Fragment() {
         return view
     }
 
+    // This function convert a coin name ("CAD") to name and country ("CAD - Canadian Dollar")
+    // get a list and return a list
+    fun convertCoinName(coinList: List<String>): Collection<String> {
+        val newCoinList : MutableList<String> = mutableListOf()
+
+        val coinMap = mapOf("CAD" to "CAD - Canadian Dollar",
+        "HKD" to "HKD - Hong Kong Dollar",
+        "ISK" to "ISK - Icelandic Króna",
+        "PHP" to "PHP - Philippine Peso",
+        "DKK" to "DKK - Danish Krone",
+        "HUF" to "HUF - Hungarian Forint",
+        "CZK" to "CZK - Czech Koruna",
+        "AUD" to "AUD - Australian Dollar",
+        "RON" to "RON - Romanian Leu",
+        "SEK" to "SEK - Swedish Krona",
+        "IDR" to "IDR - Indonesian Rupiah",
+        "INR" to "INR - Indian Rupee",
+        "BRL" to "BRL - Brazilian Real",
+        "RUB" to "RUB - Russian Ruble",
+        "HRK" to "HRK - Croatian Kuna",
+        "JPY" to "JPY - Japanese Yen",
+        "THB" to "THB - Thai Baht",
+        "CHF" to "CHF - Swiss Franc",
+        "SGD" to "SGD - Singapore Dollar",
+        "PLN" to "PLN - Poland Złoty",
+        "BGN" to "BGN - Bulgarian Lev",
+        "TRY" to "TRY - Turkish Lira",
+        "CNY" to "CNY - Chinese Yuan",
+        "NOK" to "NOK - Norwegian Krone",
+        "NZD" to "NZD - New Zealand Dollar",
+        "ZAR" to "ZAR - South African Rand",
+        "USD" to "USD - United States Dollar",
+        "MXN" to "MXN - Mexican Peso",
+        "ILS" to "ILS - Israeli Shekel",
+        "GBP" to "GBP - Pound Sterling",
+        "KRW" to "KRW - South Korean Won",
+        "MYR" to "MYR - Malaysian Ringgit",
+        "EUR" to "EUR - European Union Euro"
+        )
+
+        for (coinName in coinList) {
+            if (coinMap.containsKey(coinName))
+                newCoinList.add(coinMap[coinName].toString())
+            else
+                newCoinList.add(coinName)
+        }
+
+        return newCoinList
+    }
+
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -438,7 +487,7 @@ class RequestFragment : Fragment() {
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
             val amountTextParam = amountText.layoutParams as RelativeLayout.LayoutParams
-            val amountTextEdgeDist = dpToPx(requireContext(), 130).toInt()
+            val amountTextEdgeDist = dpToPx(requireContext(), 230).toInt()
             val amountTextTopDist = dpToPx(requireContext(), 274 + 30 * addedCoins.toInt()).toInt()
             amountTextParam.topMargin = amountTextTopDist
             amountTextParam.marginStart = amountTextEdgeDist

@@ -14,6 +14,7 @@ import android.widget.*
 import com.google.android.material.internal.ViewUtils.dpToPx
 import kotlinx.android.synthetic.main.fragment_request.view.*
 import android.text.InputFilter
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
@@ -363,9 +364,9 @@ class RequestFragment : Fragment() {
                     SimpleDateFormat("yyyyMMdd").format(Date())//yyyyMMdd_HHmmss if want more
                 val newTransactionRequest = TransactionRequest(
                     userId,
-                    myCurrency,
+                    convertCoinName(listOf(myCurrency), reverse = true).first(),
                     inputText.text.toString().toInt(),
-                    requestedCurrencies,
+                    convertCoinName(requestedCurrencies, reverse = true),
                     timeStamp,
                     latitude,
                     longitude,
@@ -406,8 +407,8 @@ class RequestFragment : Fragment() {
 
     // This function convert a coin name ("CAD") to name and country ("CAD - Canadian Dollar")
     // get a list and return a list
-    fun convertCoinName(coinList: List<String>): Collection<String> {
-        val newCoinList : MutableList<String> = mutableListOf()
+    private fun convertCoinName(coinList: List<String>, reverse : Boolean = false): ArrayList<String> {
+        val newCoinList : ArrayList<String> = arrayListOf()
 
         val coinMap = mapOf("CAD" to "CAD - Canadian Dollar",
         "HKD" to "HKD - Hong Kong Dollar",
@@ -444,11 +445,22 @@ class RequestFragment : Fragment() {
         "EUR" to "EUR - European Union Euro"
         )
 
-        for (coinName in coinList) {
-            if (coinMap.containsKey(coinName))
-                newCoinList.add(coinMap[coinName].toString())
-            else
-                newCoinList.add(coinName)
+        // convert European Union Euro to EUR
+        if (reverse) {
+            for (coinName in coinList) {
+                if (coinName.length > 3)
+                    newCoinList.add(coinName.substring(0,3))
+            }
+        }
+
+        // convert EUR to European Union Euro
+        else {
+            for (coinName in coinList) {
+                if (coinMap.containsKey(coinName))
+                    newCoinList.add(coinMap[coinName].toString())
+                else
+                    newCoinList.add(coinName)
+            }
         }
 
         return newCoinList

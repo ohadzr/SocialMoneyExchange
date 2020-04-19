@@ -72,7 +72,7 @@ class RequestFragment : Fragment() {
             savedAddedCoins = arguments!!.getFloat("savedAddedCoins")
             pickedAmount = arguments!!.getString("pickedAmount").toString()
             savedRequestedCurrencies =
-            arguments!!.getStringArrayList("savedRequestedCurrencies") as ArrayList<String>
+                arguments!!.getStringArrayList("savedRequestedCurrencies") as ArrayList<String>
             savedRequestId = arguments!!.getString("savedRequestId").toString()
 
         }
@@ -379,23 +379,14 @@ class RequestFragment : Fragment() {
                 val transactionRef: DatabaseReference =
                     database.getReference("transactionRequests").child(randomId)
                 transactionRef.setValue(newTransactionRequest)
-
-                if (savedRequestId != "")
-                    Toast.makeText(
-                        requireContext(),
-                        "Successfully updated your request",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                else {
-                    val userTransactionRequestsRef: DatabaseReference =
-                        database.getReference("users").child(userId).child("transactionRequests").push()
-                    userTransactionRequestsRef.setValue(randomId)
-                    Toast.makeText(
-                        requireContext(),
-                        "Successfully submitted your request",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+                val userTransactionRequestsRef: DatabaseReference =
+                    database.getReference("users").child(userId).child("transactionRequests").push()
+                userTransactionRequestsRef.setValue(randomId)
+                Toast.makeText(
+                    requireContext(),
+                    "Successfully submitted your request",
+                    Toast.LENGTH_SHORT
+                ).show()
                 findNavController().navigate(R.id.mainFragment)
             }
 

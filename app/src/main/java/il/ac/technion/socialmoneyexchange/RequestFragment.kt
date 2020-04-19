@@ -139,7 +139,7 @@ class RequestFragment : Fragment() {
                         ) {
                             myCurrency = coinList[position]
                             updateAmount(
-                                pickedAmount.toInt(),
+                                pickedAmount,
                                 myCurrency,
                                 requestedCurrencies,
                                 inputTextList,
@@ -167,7 +167,7 @@ class RequestFragment : Fragment() {
                 inputText.setOnClickListener { v ->
                     pickedAmount = inputText.text.toString()
                     updateAmount(
-                        pickedAmount.toInt(),
+                        pickedAmount,
                         myCurrency,
                         requestedCurrencies,
                         inputTextList,
@@ -214,7 +214,7 @@ class RequestFragment : Fragment() {
                 myAddedCoins++
                 myButtonAdd.setOnClickListener {
                     updateAmount(
-                        pickedAmount.toInt(),
+                        pickedAmount,
                         myCurrency,
                         requestedCurrencies,
                         inputTextList,
@@ -473,7 +473,7 @@ class RequestFragment : Fragment() {
                         val tempString = coinList[position]
                         requestedCurrencies[addedCoins.toInt()] = tempString
                         updateAmount(
-                            pickedAmount.toInt(),
+                            pickedAmount,
                             myCurrency,
                             requestedCurrencies,
                             inputTextList,
@@ -505,14 +505,15 @@ class RequestFragment : Fragment() {
     }
 
     fun updateAmount(
-        requestedAmount: Int,
+        requestedAmount: String,
         myCurrency: String,
         requestedCurrencies: ArrayList<String>,
         inputTextList: ArrayList<MaterialTextView>,
         addedCoins: Float
     ) {
         val myRate: Double
-        if (myApi.rates[myCurrency] != null) {
+
+        if (myApi.rates[myCurrency] != null && requestedAmount != "") {
             myRate =
                 myApi.rates[myCurrency]!!
             for (i in 0 until inputTextList.size) {

@@ -16,8 +16,8 @@
 
             <ImageView
                 android:id="@+id/logo_image_offers"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="160dp"
+                android:layout_height="160dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="16dp"
                 android:contentDescription="@string/logo_image"
@@ -25,8 +25,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/swap_trans"
-                tools:src="@drawable/swap_trans" />
+                app:srcCompat="@drawable/new_swap_logo"
+                tools:src="@drawable/new_swap_logo" />
 
 
             <TextView

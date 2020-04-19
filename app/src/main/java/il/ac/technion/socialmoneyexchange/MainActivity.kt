@@ -22,14 +22,9 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.*
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.iid.FirebaseInstanceId
-import com.google.firebase.iid.InstanceIdResult
 import il.ac.technion.socialmoneyexchange.databinding.ActivityMainBinding
-import kotlinx.android.synthetic.main.offer_list_item.*
 
 object GlobalVariable {
 
@@ -253,7 +248,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             AuthUI.getInstance()
                 .createSignInIntentBuilder()
                 .setAvailableProviders(providers)
-                .setLogo(R.drawable.swap_trans)
+                .setLogo(R.drawable.new_swap_logo)
                 .setTosAndPrivacyPolicyUrls(
                     getString(R.string.terms_of_service_url),
                     getString(R.string.privacy_policy_url))

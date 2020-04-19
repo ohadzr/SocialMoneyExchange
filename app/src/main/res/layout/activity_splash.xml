@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_marginTop="150dp"
-        android:src="@drawable/swap_trans"
+        android:src="@drawable/new_swap_logo"
         android:contentDescription="@string/logo_image" />
 
     <TextView

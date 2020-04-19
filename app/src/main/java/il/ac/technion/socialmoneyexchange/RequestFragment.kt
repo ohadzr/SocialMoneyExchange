@@ -79,6 +79,7 @@ class RequestFragment : Fragment() {
 
     }
 
+    // TODO: add coin names and flags
     @SuppressLint("RestrictedApi", "SimpleDateFormat", "SetTextI18n")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?

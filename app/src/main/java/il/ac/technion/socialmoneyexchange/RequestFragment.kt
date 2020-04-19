@@ -14,6 +14,7 @@ import android.widget.*
 import com.google.android.material.internal.ViewUtils.dpToPx
 import kotlinx.android.synthetic.main.fragment_request.view.*
 import android.text.InputFilter
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
@@ -25,7 +26,6 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.gson.GsonBuilder
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
-import kotlinx.android.synthetic.main.fragment_request.*
 import okhttp3.*
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -72,7 +72,7 @@ class RequestFragment : Fragment() {
             savedAddedCoins = arguments!!.getFloat("savedAddedCoins")
             pickedAmount = arguments!!.getString("pickedAmount").toString()
             savedRequestedCurrencies =
-            arguments!!.getStringArrayList("savedRequestedCurrencies") as ArrayList<String>
+                arguments!!.getStringArrayList("savedRequestedCurrencies") as ArrayList<String>
             savedRequestId = arguments!!.getString("savedRequestId").toString()
 
         }
@@ -111,7 +111,7 @@ class RequestFragment : Fragment() {
                 } else {
                     requestedCurrencies = savedRequestedCurrencies
                 }
-                coinList.addAll(myApi.rates.keys.toList())
+                coinList.addAll(convertCoinName(myApi.rates.keys.toList()))
                 //first spinner - giving currency
                 val spinner = SearchableSpinner(requireContext())
                 spinner.layoutParams = RelativeLayout.LayoutParams(
@@ -140,7 +140,7 @@ class RequestFragment : Fragment() {
                         ) {
                             myCurrency = coinList[position]
                             updateAmount(
-                                pickedAmount.toInt(),
+                                pickedAmount,
                                 myCurrency,
                                 requestedCurrencies,
                                 inputTextList,
@@ -156,19 +156,19 @@ class RequestFragment : Fragment() {
                     ViewGroup.LayoutParams.WRAP_CONTENT
                 )
                 val inputTextParam = inputText.layoutParams as RelativeLayout.LayoutParams
-                val inputTextEdgeDist = dpToPx(requireContext(), 130).toInt()
+                val inputTextEdgeDist = dpToPx(requireContext(), 230).toInt()
                 val inputTextTopDist = dpToPx(requireContext(), 70).toInt()
                 inputTextParam.topMargin = inputTextTopDist
                 inputTextParam.marginStart = inputTextEdgeDist
                 inputText.layoutParams = inputTextParam
-                inputText.hint = "Insert amount"
+                inputText.hint = "Insert here"
                 inputText.inputType = InputType.TYPE_CLASS_NUMBER
                 inputText.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(MAX_MONEY_DIGITS))
                 inputText.setText(pickedAmount)
                 inputText.setOnClickListener { v ->
                     pickedAmount = inputText.text.toString()
                     updateAmount(
-                        pickedAmount.toInt(),
+                        pickedAmount,
                         myCurrency,
                         requestedCurrencies,
                         inputTextList,
@@ -215,7 +215,7 @@ class RequestFragment : Fragment() {
                 myAddedCoins++
                 myButtonAdd.setOnClickListener {
                     updateAmount(
-                        pickedAmount.toInt(),
+                        pickedAmount,
                         myCurrency,
                         requestedCurrencies,
                         inputTextList,
@@ -365,9 +365,9 @@ class RequestFragment : Fragment() {
                     SimpleDateFormat("yyyyMMdd").format(Date())//yyyyMMdd_HHmmss if want more
                 val newTransactionRequest = TransactionRequest(
                     userId,
-                    myCurrency,
+                    convertCoinName(listOf(myCurrency), reverse = true).first(),
                     inputText.text.toString().toInt(),
-                    requestedCurrencies,
+                    convertCoinName(requestedCurrencies, reverse = true),
                     timeStamp,
                     latitude,
                     longitude,
@@ -389,7 +389,8 @@ class RequestFragment : Fragment() {
                     ).show()
                 else {
                     val userTransactionRequestsRef: DatabaseReference =
-                        database.getReference("users").child(userId).child("transactionRequests").push()
+                        database.getReference("users").child(userId).child("transactionRequests")
+                            .push()
                     userTransactionRequestsRef.setValue(randomId)
                     Toast.makeText(
                         requireContext(),
@@ -404,6 +405,71 @@ class RequestFragment : Fragment() {
 
 
         return view
+    }
+
+    // This function convert a coin name ("CAD") to name and country ("CAD - Canadian Dollar")
+    // get a list and return a list
+    private fun convertCoinName(
+        coinList: List<String>,
+        reverse: Boolean = false
+    ): ArrayList<String> {
+        val newCoinList: ArrayList<String> = arrayListOf()
+
+        val coinMap = mapOf(
+            "CAD" to "CAD - Canadian Dollar",
+            "HKD" to "HKD - Hong Kong Dollar",
+            "ISK" to "ISK - Icelandic Króna",
+            "PHP" to "PHP - Philippine Peso",
+            "DKK" to "DKK - Danish Krone",
+            "HUF" to "HUF - Hungarian Forint",
+            "CZK" to "CZK - Czech Koruna",
+            "AUD" to "AUD - Australian Dollar",
+            "RON" to "RON - Romanian Leu",
+            "SEK" to "SEK - Swedish Krona",
+            "IDR" to "IDR - Indonesian Rupiah",
+            "INR" to "INR - Indian Rupee",
+            "BRL" to "BRL - Brazilian Real",
+            "RUB" to "RUB - Russian Ruble",
+            "HRK" to "HRK - Croatian Kuna",
+            "JPY" to "JPY - Japanese Yen",
+            "THB" to "THB - Thai Baht",
+            "CHF" to "CHF - Swiss Franc",
+            "SGD" to "SGD - Singapore Dollar",
+            "PLN" to "PLN - Poland Złoty",
+            "BGN" to "BGN - Bulgarian Lev",
+            "TRY" to "TRY - Turkish Lira",
+            "CNY" to "CNY - Chinese Yuan",
+            "NOK" to "NOK - Norwegian Krone",
+            "NZD" to "NZD - New Zealand Dollar",
+            "ZAR" to "ZAR - South African Rand",
+            "USD" to "USD - United States Dollar",
+            "MXN" to "MXN - Mexican Peso",
+            "ILS" to "ILS - Israeli Shekel",
+            "GBP" to "GBP - Pound Sterling",
+            "KRW" to "KRW - South Korean Won",
+            "MYR" to "MYR - Malaysian Ringgit",
+            "EUR" to "EUR - European Union Euro"
+        )
+
+        // convert European Union Euro to EUR
+        if (reverse) {
+            for (coinName in coinList) {
+                if (coinName.length > 3)
+                    newCoinList.add(coinName.substring(0, 3))
+            }
+        }
+
+        // convert EUR to European Union Euro
+        else {
+            for (coinName in coinList) {
+                if (coinMap.containsKey(coinName))
+                    newCoinList.add(coinMap[coinName].toString())
+                else
+                    newCoinList.add(coinName)
+            }
+        }
+
+        return newCoinList
     }
 
 
@@ -439,7 +505,7 @@ class RequestFragment : Fragment() {
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
             val amountTextParam = amountText.layoutParams as RelativeLayout.LayoutParams
-            val amountTextEdgeDist = dpToPx(requireContext(), 130).toInt()
+            val amountTextEdgeDist = dpToPx(requireContext(), 240).toInt()
             val amountTextTopDist = dpToPx(requireContext(), 274 + 30 * addedCoins.toInt()).toInt()
             amountTextParam.topMargin = amountTextTopDist
             amountTextParam.marginStart = amountTextEdgeDist
@@ -483,7 +549,7 @@ class RequestFragment : Fragment() {
                         val tempString = coinList[position]
                         requestedCurrencies[addedCoins.toInt()] = tempString
                         updateAmount(
-                            pickedAmount.toInt(),
+                            pickedAmount,
                             myCurrency,
                             requestedCurrencies,
                             inputTextList,
@@ -515,20 +581,23 @@ class RequestFragment : Fragment() {
     }
 
     fun updateAmount(
-        requestedAmount: Int,
+        requestedAmount: String,
         myCurrency: String,
         requestedCurrencies: ArrayList<String>,
         inputTextList: ArrayList<MaterialTextView>,
         addedCoins: Float
     ) {
         val myRate: Double
-        if (myApi.rates[myCurrency] != null) {
-            myRate =
-                myApi.rates[myCurrency]!!
-            for (i in 0 until inputTextList.size) {
-                val requestedCurrencyAmount =
-                    (myApi.rates[requestedCurrencies[i]]!! / myRate) * requestedAmount.toDouble()
-                inputTextList[i].text = "%.3f".format(requestedCurrencyAmount.toFloat())
+        if (myCurrency != null && myCurrency != ""&& requestedAmount!="") {
+            if (myApi.rates[myCurrency.substring(0, 3)] != null) {
+                myRate = myApi.rates[myCurrency.substring(0, 3)]!!
+                for (i in 0 until requestedCurrencies.size) {
+                    if (requestedCurrencies[i] != "") {
+                        val requestedCurrencyAmount =
+                            (myApi.rates[requestedCurrencies[i].substring(0, 3)]!! / myRate) * requestedAmount.toDouble()
+                        inputTextList[i].text = "%.3f".format(requestedCurrencyAmount.toFloat())
+                    }
+                }
             }
         }
 
